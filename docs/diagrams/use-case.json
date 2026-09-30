@@ -1,0 +1,50 @@
+{
+  "system": "Internship Platform",
+  "actors": [
+    {"name": "Student", "side": "left"},
+    {"name": "Coordinator", "side": "right"},
+    {"name": "Company Rep", "side": "right"}
+  ],
+  "use_cases": [
+    {
+      "name": "Internship Application",
+      "actors": ["Student"]
+    },
+    {
+      "name": "Student Matching",
+      "actors": ["Coordinator"],
+      "includes": ["View Prescreened Matches"]
+    },
+    {"name": "View Prescreened Matches"},
+    {
+      "name": "Track Applications and Matches",
+      "actors": ["Student"]
+    },
+    {
+      "name": "Close Internship Cycle",
+      "actors": ["Coordinator"]
+    },
+    {
+      "name": "Post Open Positions",
+      "actors": ["Company Rep"]
+    },
+    {
+      "name": "Candidate Selection",
+      "actors": ["Company Rep", "Student"],
+      "includes": ["View Matched Students"]
+    },
+    {"name": "View Matched Students"},
+    {
+      "name": "Offer Position to Student",
+      "extends": ["Candidate Selection"]
+    },
+    {
+      "name": "Move Student to External Interview Process",
+      "extends": ["Candidate Selection"]
+    },
+    {
+      "name": "Reject Student",
+      "extends": ["Candidate Selection"]
+    }
+  ]
+}

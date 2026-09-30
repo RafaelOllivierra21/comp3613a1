@@ -1,0 +1,45 @@
+@startuml
+!pragma layout smetana
+skinparam shadowing false
+skinparam actorBorderColor #1B365D
+skinparam actorFontColor #1E232D
+skinparam usecaseBackgroundColor #FFFFFF
+skinparam usecaseBorderColor #1B365D
+skinparam usecaseFontColor #1E232D
+skinparam rectangleBorderColor #1B365D
+skinparam rectangleBackgroundColor #F8FAFC
+skinparam arrowColor #1B365D
+
+actor "Student" as Student
+
+rectangle "Internship Platform" {
+  usecase "Internship Application" as Internship_Application
+  usecase "Student Matching" as Student_Matching
+  usecase "View Prescreened Matches" as View_Prescreened_Matches
+  usecase "Track Applications and Matches" as Track_Applications_and_Matches
+  usecase "Close Internship Cycle" as Close_Internship_Cycle
+  usecase "Post Open Positions" as Post_Open_Positions
+  usecase "Candidate Selection" as Candidate_Selection
+  usecase "View Matched Students" as View_Matched_Students
+  usecase "Offer Position to Student" as Offer_Position_to_Student
+  usecase "Move Student to External Interview Process" as Move_Student_to_External_Interview_Process
+  usecase "Reject Student" as Reject_Student
+}
+
+actor "Coordinator" as Coordinator
+actor "Company Rep" as Company_Rep
+
+Student --> Internship_Application
+Student_Matching <-- Coordinator
+Student_Matching ..> View_Prescreened_Matches : <<include>>
+Student --> Track_Applications_and_Matches
+Close_Internship_Cycle <-- Coordinator
+Post_Open_Positions <-- Company_Rep
+Candidate_Selection <-- Company_Rep
+Student --> Candidate_Selection
+Candidate_Selection ..> View_Matched_Students : <<include>>
+Offer_Position_to_Student ..> Candidate_Selection : <<extend>>
+Move_Student_to_External_Interview_Process ..> Candidate_Selection : <<extend>>
+Reject_Student ..> Candidate_Selection : <<extend>>
+
+@enduml
