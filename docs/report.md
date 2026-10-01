@@ -139,15 +139,97 @@ erDiagram
 
 Assumptions: the internship program runs only at the UWI St. Augustine campus and is open to students across all faculties; resumes are stored as a link rather than an uploaded file. Positions belong to the company and are tied to an internship cycle, so closing a cycle can close the related positions. The `Match` record remains separate from `Application` to track interviews, offers, and outcome states without losing the original application record.
 
+Phase 4 model review: the matching wireframe displays a fit percentage for suggested positions. This score will be calculated when suggestions are shown rather than stored on `Match`; no new model field is needed.
+
 ## Wireframes
 
-Embed each student-crafted wireframe here (Phase 4). Paths are relative to this file:
+The five wireframes cover all use cases in the Phase 2 diagram. Profile details and skills, application and cycle states, position details, and match outcomes shown in the designs are represented by the existing model fields. Match-fit percentages are calculated when suggestions are shown rather than persisted. Position candidate counts and active-match counts are display values derived from related records.
 
-```markdown
-### Explore / Search Publications
+### Internship Application
 
-![Explore / Search Publications](wireframes/explore.png)
-```
+![Internship Application](wireframes/internship_application.png)
+
+### Student Matching
+
+![Student Matching](wireframes/student_matching.png)
+
+### Candidate Selection
+
+![Candidate Selection](wireframes/candidate_selection.png)
+
+### Post Open Positions
+
+![Post Open Positions](wireframes/post_position.png)
+
+### Close Internship Cycle
+
+![Close Internship Cycle](wireframes/close_cycle.png)
+
+<!-- student-build:wireframe-coverage
+use_case: Internship Application
+image: docs/wireframes/internship_application.png
+covered: yes
+-->
+
+<!-- student-build:wireframe-coverage
+use_case: Student Matching
+image: docs/wireframes/student_matching.png
+covered: yes
+-->
+
+<!-- student-build:wireframe-coverage
+use_case: View Prescreened Matches
+image: docs/wireframes/student_matching.png
+covered: yes
+-->
+
+<!-- student-build:wireframe-coverage
+use_case: Track Applications and Matches
+image: docs/wireframes/candidate_selection.png
+covered: yes
+-->
+
+<!-- student-build:wireframe-coverage
+use_case: Close Internship Cycle
+image: docs/wireframes/close_cycle.png
+covered: yes
+-->
+
+<!-- student-build:wireframe-coverage
+use_case: Post Open Positions
+image: docs/wireframes/post_position.png
+covered: yes
+-->
+
+<!-- student-build:wireframe-coverage
+use_case: Candidate Selection
+image: docs/wireframes/candidate_selection.png
+covered: yes
+-->
+
+<!-- student-build:wireframe-coverage
+use_case: View Matched Students
+image: docs/wireframes/candidate_selection.png
+covered: yes
+-->
+
+<!-- student-build:wireframe-coverage
+use_case: Offer Position to Student
+image: docs/wireframes/candidate_selection.png
+covered: yes
+-->
+
+<!-- student-build:wireframe-coverage
+use_case: Move Student to External Interview Process
+image: docs/wireframes/candidate_selection.png
+covered: yes
+-->
+
+<!-- student-build:wireframe-coverage
+use_case: Reject Student
+image: docs/wireframes/candidate_selection.png
+covered: yes
+-->
 
 `python manage.py report` also embeds any PNG/JPG still missing from `docs/wireframes/`.
 
