@@ -1,12 +1,14 @@
 {% extends "base.html" %}
-{% block title %}Sign in{% endblock %}
+{% block title %}Sign in | InternBridge{% endblock %}
 
 {% block content %}
 <div class="auth-shell">
   <div class="auth-panel">
     <a class="auth-back" href="{{ url_for('index_view') }}">← Home</a>
-    <div class="brand-wordmark">FastStarter</div>
-    <p class="auth-tagline">Sign in to continue</p>
+    <div class="auth-brand">
+      <img class="brand-logo" src="{{ url_for('static', path='img/internbridge-light.png') }}" alt="InternBridge">
+    </div>
+    <p class="auth-tagline">Sign in to your InternBridge account.</p>
 
     <form method="POST" action="{{ url_for('login_action_ajax') }}">
       <div class="mb-3">

@@ -235,7 +235,9 @@ covered: yes
 
 ## Theming
 
-Branding preferences and how they were applied (landing / login / register).
+InternBridge uses a modern, professional visual identity. The main color is dark teal (`#172D36`), with mint (`#C3E8CF`) for filled accents and card borders, dark green for links, off-white (`#F7F7F2`) page backgrounds, white (`#FFFFFF`) cards, and muted grey (`#566A6F`) for small text. Manrope is loaded from Google Fonts. The light logo is used on the landing, login, and registration pages; the primary logo is used in the authenticated dark-teal navigation, and the InternBridge favicon is set site-wide. Logos appear without background boxes. Landing-page sign-in buttons use a dark-teal fill; signed-in landing actions use dark-teal-filled buttons as well. The browser title is InternBridge; the landing page presents the tagline “Your Field. Your Future. Connected.”
+
+The landing, login, and registration pages and authenticated navigation now use these brand styles. The signed-in navigation follows the wireframe's horizontal logo / Dashboard / Apply / profile layout. The placeholder FastStarter landing copy and demo-login footer have been removed; authentication and `/config` remain available.
 
 ## Implementation notes
 
