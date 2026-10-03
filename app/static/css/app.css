@@ -103,6 +103,17 @@ small {
   border-color: var(--brand-border);
 }
 
+.match-fit-badge {
+  color: var(--brand-primary-deep);
+  background: var(--brand-accent);
+  font-size: 1rem;
+}
+
+.nav-pills .nav-link.active {
+  color: var(--brand-primary-deep);
+  background: var(--brand-accent);
+}
+
 /* Public landing */
 .landing {
   min-height: 100vh;
@@ -348,11 +359,60 @@ small {
   font-weight: 700;
 }
 
+.status-badge {
+  border: 1px solid transparent;
+  font-weight: 700;
+}
+
+.status-in-progress {
+  color: #14515b !important;
+  background: #d5edf0 !important;
+  border-color: #b7dfe4;
+}
+
+.status-awaiting {
+  color: #704b08 !important;
+  background: #fff0c2 !important;
+  border-color: #f0d98f;
+}
+
+.status-success {
+  color: #174c35 !important;
+  background: #c3e8cf !important;
+  border-color: #9fd0af;
+}
+
+.status-negative {
+  color: #773b40 !important;
+  background: #f8dfe0 !important;
+  border-color: #eec2c5;
+}
+
+.status-closed {
+  color: #56636a !important;
+  background: #e5e9e9 !important;
+  border-color: #cbd2d4;
+}
+
+.status-neutral {
+  color: #43545a !important;
+  background: #edf0ef !important;
+  border-color: #d6ddda;
+}
+
 .dashboard-application-status {
   min-height: 2rem;
   padding: 0.55rem 0.9rem;
   font-size: 1rem;
   font-weight: 700;
+}
+
+.matching-status-badge {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--brand-border);
+  color: var(--brand-primary) !important;
+  background: var(--brand-accent) !important;
 }
 
 .application-empty-state {

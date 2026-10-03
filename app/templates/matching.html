@@ -1,0 +1,127 @@
+{% extends "authenticated-base.html" %}
+{% block title %}Match Application | InternBridge{% endblock %}
+
+{% block subpage_content %}
+<main class="container-fluid py-2">
+  <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4">
+    <div>
+      <a href="{{ url_for('admin_home_view') }}" class="small">&larr; Applications</a>
+      <h1 class="h3 mt-2 mb-0">Match Application - {{ state.student_user.fullName or state.student_user.username }}</h1>
+    </div>
+    <span class="badge rounded-pill dashboard-application-status {{ state.application.status|status_badge_class }}">
+      {{ state.application.status|status_label }}
+    </span>
+  </div>
+
+  {% if not state.cycle_is_open %}
+  <div class="alert alert-warning" role="status">The internship cycle is closed. Matching is unavailable.</div>
+  {% elif state.application.status|lower == "placed" %}
+  <div class="alert alert-info" role="status">This application is already placed. Matching is unavailable.</div>
+  {% endif %}
+
+  <div class="row g-4">
+    <section class="col-lg-8">
+      <div class="card p-3 p-lg-4 mb-4">
+        <h2 class="h5 mb-3">Suggested Positions</h2>
+        {% if state.suggested_positions %}
+        <div class="row g-3">
+          {% for option in state.suggested_positions %}
+          <div class="col-md-4">
+            <article class="card h-100 p-3">
+              <span class="badge rounded-pill match-fit-badge align-self-start mb-2">
+                {{ option.fit_percentage|round|int }}%
+              </span>
+              <h3 class="h6 mb-1">{{ option.position.title }}</h3>
+              <p class="small mb-3">{{ option.company.name }}</p>
+              {% if state.can_match %}
+              <form method="post" action="{{ url_for('create_position_match', application_id=state.application.applicationID, position_id=option.position.positionID) }}" class="mt-auto">
+                <button class="btn btn-primary w-100" type="submit">Match</button>
+              </form>
+              {% endif %}
+            </article>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="application-empty-state p-4 text-center">
+          <p class="mb-0 fw-semibold">No suggested positions</p>
+        </div>
+        {% endif %}
+
+        <details class="mt-4">
+          <summary class="btn btn-outline-secondary">Show all open positions</summary>
+          {% if state.open_positions %}
+          <div class="list-group list-group-flush mt-3">
+            {% for option in state.open_positions %}
+            <div class="list-group-item d-flex align-items-center justify-content-between gap-3 px-0">
+              <div>
+                <strong>{{ option.position.title }}</strong>
+                <span class="small d-block">{{ option.company.name }}</span>
+              </div>
+              <div class="d-flex align-items-center gap-3">
+                <span class="small">{{ option.fit_percentage|round|int }}%</span>
+                {% if state.can_match %}
+                <form method="post" action="{{ url_for('create_position_match', application_id=state.application.applicationID, position_id=option.position.positionID) }}">
+                  <button class="btn btn-sm btn-primary" type="submit">Match</button>
+                </form>
+                {% endif %}
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <p class="application-empty-state p-3 mt-3 mb-0">
+            {{ "No additional open positions available." if state.has_open_positions else "No open positions currently." }}
+          </p>
+          {% endif %}
+        </details>
+      </div>
+    </section>
+
+    <aside class="col-lg-4">
+      <section class="card p-3 p-lg-4 mb-4">
+        <h2 class="h5 mb-3">Student Details</h2>
+        <dl class="row mb-0">
+          <dt class="col-5">ID</dt><dd class="col-7">{{ state.student.studentID }}</dd>
+          <dt class="col-5">Degree</dt><dd class="col-7">{{ state.student.degreeName }}</dd>
+          <dt class="col-5">GPA</dt><dd class="col-7">{{ "%.2f"|format(state.student.gpa) }}</dd>
+          <dt class="col-5">Graduation</dt><dd class="col-7">{{ state.student.expectedGraduationDate.strftime("%d/%m/%Y") }}</dd>
+          <dt class="col-5">Resume</dt>
+          <dd class="col-7"><a href="{{ state.student.resumeLink }}" target="_blank" rel="noopener noreferrer">View resume</a></dd>
+          <dt class="col-12">Skills</dt>
+          <dd class="col-12 d-flex flex-wrap gap-2">
+            {% for skill in state.student_skills %}
+            <span class="badge rounded-pill text-bg-light border">{{ skill.name }}</span>
+            {% endfor %}
+          </dd>
+        </dl>
+      </section>
+
+      <section class="card p-3 p-lg-4">
+        <h2 class="h5 mb-3">Current Matches</h2>
+        {% if state.current_matches %}
+        <div class="list-group list-group-flush">
+          {% for current in state.current_matches %}
+          <div class="list-group-item px-0">
+            <div class="d-flex justify-content-between gap-2">
+              <div>
+                <strong class="d-block">{{ current.position.title }}</strong>
+                <span class="small">{{ current.company.name }}</span>
+              </div>
+              <span class="badge rounded-pill align-self-start {{ current.match.status|status_badge_class }}">
+                {{ current.match.status|status_label }}
+              </span>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="application-empty-state p-3 text-center">
+          <p class="mb-0">No current matches</p>
+        </div>
+        {% endif %}
+      </section>
+    </aside>
+  </div>
+</main>
+{% endblock %}

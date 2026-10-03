@@ -140,6 +140,20 @@ def cmd_seed(args: argparse.Namespace) -> None:
     )
 
 
+def cmd_seed_sample(args: argparse.Namespace) -> None:
+    """Import the reviewed synthetic matching fixture without dropping data."""
+    from app.sample_data import seed_sample_data
+
+    counts = seed_sample_data(Path(args.fixture))
+    print(
+        "Sample data ready: "
+        f"added {counts['users']} users, "
+        f"{counts['companies']} companies, "
+        f"{counts['positions']} positions, "
+        f"and {counts['students']} student applications."
+    )
+
+
 def cmd_run(args: argparse.Namespace) -> None:
     """Start the FastAPI app with Uvicorn."""
     import uvicorn
@@ -292,6 +306,17 @@ def build_parser() -> argparse.ArgumentParser:
         help="Run configured seed setup",
     )
     p_seed.set_defaults(func=cmd_seed)
+
+    p_seed_sample = sub.add_parser(
+        "seed-sample",
+        help="Import the reviewed synthetic matching fixture without dropping data",
+    )
+    p_seed_sample.add_argument(
+        "--fixture",
+        default="docs/sample-data.json",
+        help="Path to the reviewed JSON fixture",
+    )
+    p_seed_sample.set_defaults(func=cmd_seed_sample)
 
     p_run = sub.add_parser("run", help="Start the web app (uvicorn)")
     p_run.add_argument("--host", default=None, help="Bind host")

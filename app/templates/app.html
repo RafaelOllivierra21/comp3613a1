@@ -5,8 +5,8 @@
 <main class="container-fluid py-2">
   <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4">
     <h1 class="h3 mb-0">Dashboard</h1>
-    <span class="badge rounded-pill cycle-status border">
-      Cycle Status: {{ "Open" if state.cycle_is_open else "Closed" }}
+    <span class="badge rounded-pill cycle-status {{ ('Open' if state.cycle_is_open else 'Closed')|status_badge_class }}">
+      Cycle Status: {{ ("Open" if state.cycle_is_open else "Closed")|status_label }}
     </span>
   </div>
 
@@ -26,8 +26,8 @@
         <div class="card h-100 p-4">
           <h2 class="h5 mb-3">Your Application</h2>
           <p class="mb-1">
-            <span class="badge text-bg-success dashboard-application-status">
-              {{ state.application.status|title }}
+            <span class="badge rounded-pill dashboard-application-status {{ state.application.status|status_badge_class }}">
+              {{ state.application.status|status_label }}
             </span>
           </p>
           <p class="small mb-4">Submitted: {{ state.application.dateSubmitted.strftime("%d/%m/%Y") }}</p>

@@ -4,12 +4,16 @@
 
 {% block content %}
 <header class="app-navbar">
-    <a class="app-brand" href="{{ url_for('user_home_view') }}" aria-label="InternBridge dashboard">
+    <a class="app-brand" href="{{ url_for('admin_home_view') if user.role in ['admin', 'coordinator'] else url_for('user_home_view') }}" aria-label="InternBridge dashboard">
         <img class="brand-logo" src="{{ url_for('static', path='img/internbridge-primary.png') }}" alt="InternBridge">
     </a>
     <nav class="app-nav-links" aria-label="Main navigation">
+        {% if user.role == "coordinator" %}
+        <a class="app-nav-link {{ 'active' if request.url.path == '/admin' or request.url.path.startswith('/admin/applications') }}" href="{{ url_for('admin_home_view') }}">Applications</a>
+        {% elif user.role == "admin" %}
+        <a class="app-nav-link {{ 'active' if request.url.path == '/admin' }}" href="{{ url_for('admin_home_view') }}">Dashboard</a>
+        {% else %}
         <a class="app-nav-link {{ 'active' if request.url.path == '/app' }}" href="{{ url_for('user_home_view') }}">Dashboard</a>
-        {% if user.role == "student" %}
         <a class="app-nav-link {{ 'active' if request.url.path.startswith('/app/application') }}" href="{{ url_for('application_view') }}">Apply</a>
         {% endif %}
     </nav>

@@ -99,6 +99,14 @@ python manage.py init --no-seed   # create tables and skip seed setup
 
 `python manage.py seed` idempotently adds the single open internship cycle (October 5, 2026–May 5, 2027) and the configured skill list. It does not create demo accounts, student profiles, or applications. Register an account to sign in.
 
+The reviewed synthetic matching fixture can be imported without dropping existing data:
+
+```bash
+INTERNBRIDGE_SAMPLE_PASSWORD='your-local-sample-password' python manage.py seed-sample
+```
+
+On PowerShell, set `$env:INTERNBRIDGE_SAMPLE_PASSWORD` for the current session before running `python manage.py seed-sample`. The password is read locally and hashed with the registration password helper; it is not stored in `docs/sample-data.json`. The importer is transactional and repeat-safe, and it rejects conflicting existing fixture records rather than overwriting them.
+
 ```bash
 python manage.py users
 ```
@@ -126,6 +134,7 @@ Commands are implemented in `app/cli.py` (stdlib `argparse`) and invoked via `ma
 |---------|---------|
 | `python manage.py init` | Drop (default), create DB tables, and run configured seed setup |
 | `python manage.py seed` | Run configured seed setup (also part of `init`) |
+| `python manage.py seed-sample` | Import the reviewed matching fixture without dropping or overwriting existing data |
 | `python manage.py run` | Start Uvicorn (reload unless `ENV=production`) |
 | `python manage.py users` | Print users in the DB |
 | `python manage.py transcripts` | Optional: package agent-written `docs/transcripts/*.md` into INDEX + zip (no IDE scrape) |

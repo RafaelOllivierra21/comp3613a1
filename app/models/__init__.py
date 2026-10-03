@@ -11,10 +11,16 @@ from app.models.application import (
     Student,
     StudentSkill,
 )
+from app.models.position import Company, CompanyRep, Match, Position, PositionSkill
 
 __all__ = [
     "Application",
+    "Company",
+    "CompanyRep",
     "InternshipCycle",
+    "Match",
+    "Position",
+    "PositionSkill",
     "Skill",
     "Student",
     "StudentSkill",

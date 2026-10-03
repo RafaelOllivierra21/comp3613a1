@@ -1,0 +1,388 @@
+{
+  "version": 1,
+  "purpose": "Synthetic Student Matching review fixture. Do not import before review.",
+  "sharedPasswordEnvironmentVariable": "INTERNBRIDGE_SAMPLE_PASSWORD",
+  "cycle": {
+    "startDate": "2026-10-05",
+    "endDate": "2027-05-05",
+    "status": "Open",
+    "useExistingSeedCycle": true
+  },
+  "users": [
+    {
+      "key": "coordinator",
+      "username": "coordinator.demo",
+      "email": "coordinator@example.com",
+      "fullName": "Taylor Coordinator",
+      "number": "868-555-0100",
+      "role": "coordinator"
+    },
+    {
+      "key": "rep_bluepeak",
+      "username": "rep.bluepeak",
+      "email": "rep.bluepeak@example.com",
+      "fullName": "Morgan Ellis",
+      "number": "868-555-0101",
+      "role": "company_rep"
+    },
+    {
+      "key": "rep_island_grid",
+      "username": "rep.islandgrid",
+      "email": "rep.islandgrid@example.com",
+      "fullName": "Riley Campbell",
+      "number": "868-555-0102",
+      "role": "company_rep"
+    },
+    {
+      "key": "rep_seabright",
+      "username": "rep.seabright",
+      "email": "rep.seabright@example.com",
+      "fullName": "Avery James",
+      "number": "868-555-0103",
+      "role": "company_rep"
+    },
+    {
+      "key": "rep_peoplefirst",
+      "username": "rep.peoplefirst",
+      "email": "rep.peoplefirst@example.com",
+      "fullName": "Jordan Clarke",
+      "number": "868-555-0104",
+      "role": "company_rep"
+    },
+    {
+      "key": "rep_coral_ledger",
+      "username": "rep.coralledger",
+      "email": "rep.coralledger@example.com",
+      "fullName": "Casey Grant",
+      "number": "868-555-0105",
+      "role": "company_rep"
+    },
+    {
+      "key": "student_jane",
+      "username": "student.jane",
+      "email": "jane.student@example.com",
+      "fullName": "Jane Doe",
+      "number": "868-555-0106",
+      "role": "student"
+    },
+    {
+      "key": "student_jordan",
+      "username": "student.jordan",
+      "email": "jordan.student@example.com",
+      "fullName": "Jordan Lee",
+      "number": "868-555-0107",
+      "role": "student"
+    },
+    {
+      "key": "student_amara",
+      "username": "student.amara",
+      "email": "amara.student@example.com",
+      "fullName": "Amara Singh",
+      "number": "868-555-0108",
+      "role": "student"
+    },
+    {
+      "key": "student_malik",
+      "username": "student.malik",
+      "email": "malik.student@example.com",
+      "fullName": "Malik Brown",
+      "number": "868-555-0109",
+      "role": "student"
+    },
+    {
+      "key": "student_casey",
+      "username": "student.casey",
+      "email": "casey.student@example.com",
+      "fullName": "Casey Morgan",
+      "number": "868-555-0110",
+      "role": "student"
+    },
+    {
+      "key": "student_renee",
+      "username": "student.renee",
+      "email": "renee.student@example.com",
+      "fullName": "Renee Thomas",
+      "number": "868-555-0111",
+      "role": "student"
+    }
+  ],
+  "companies": [
+    {
+      "key": "bluepeak",
+      "name": "BluePeak Technology",
+      "location": "Port of Spain",
+      "representativeUserKey": "rep_bluepeak"
+    },
+    {
+      "key": "island_grid",
+      "name": "Island Grid Engineering",
+      "location": "San Fernando",
+      "representativeUserKey": "rep_island_grid"
+    },
+    {
+      "key": "seabright",
+      "name": "Seabright Legal Group",
+      "location": "Chaguanas",
+      "representativeUserKey": "rep_seabright"
+    },
+    {
+      "key": "peoplefirst",
+      "name": "PeopleFirst HR Services",
+      "location": "Arima",
+      "representativeUserKey": "rep_peoplefirst"
+    },
+    {
+      "key": "coral_ledger",
+      "name": "Coral Ledger & Co.",
+      "location": "Couva",
+      "representativeUserKey": "rep_coral_ledger"
+    }
+  ],
+  "positions": [
+    {
+      "key": "cybersecurity_analyst",
+      "companyKey": "bluepeak",
+      "title": "Cybersecurity Analyst Intern",
+      "description": "Support security monitoring, incident triage, and vulnerability reviews.",
+      "dateOpened": "2026-10-05",
+      "status": "Open",
+      "requiredSkills": [
+        "Cybersecurity",
+        "IT Support & Troubleshooting",
+        "Problem Solving",
+        "Communication"
+      ]
+    },
+    {
+      "key": "data_support",
+      "companyKey": "bluepeak",
+      "title": "Data Support Intern",
+      "description": "Prepare datasets and assist with database quality checks and reporting.",
+      "dateOpened": "2026-10-05",
+      "status": "Open",
+      "requiredSkills": [
+        "Data Analysis",
+        "Database Management & SQL",
+        "Critical Thinking",
+        "Teamwork & Collaboration"
+      ]
+    },
+    {
+      "key": "cad_design",
+      "companyKey": "island_grid",
+      "title": "CAD Design Intern",
+      "description": "Assist engineers with CAD drawings, revisions, and design documentation.",
+      "dateOpened": "2026-10-05",
+      "status": "Open",
+      "requiredSkills": [
+        "CAD & Engineering Design",
+        "Systems Analysis & Design",
+        "Attention to Detail",
+        "Problem Solving"
+      ]
+    },
+    {
+      "key": "energy_systems",
+      "companyKey": "island_grid",
+      "title": "Energy Systems Intern",
+      "description": "Support project tracking and technical documentation for energy projects.",
+      "dateOpened": "2026-10-05",
+      "status": "Open",
+      "requiredSkills": [
+        "Project Management",
+        "CAD & Engineering Design",
+        "Technical Documentation",
+        "Teamwork & Collaboration"
+      ]
+    },
+    {
+      "key": "legal_research",
+      "companyKey": "seabright",
+      "title": "Legal Research Intern",
+      "description": "Research case law and prepare draft legal summaries for review.",
+      "dateOpened": "2026-10-05",
+      "status": "Open",
+      "requiredSkills": [
+        "Legal Research",
+        "Legal Writing & Drafting",
+        "Case Analysis",
+        "Communication"
+      ]
+    },
+    {
+      "key": "compliance",
+      "companyKey": "seabright",
+      "title": "Compliance Intern",
+      "description": "Review regulatory requirements and help maintain compliance records.",
+      "dateOpened": "2026-10-05",
+      "status": "Open",
+      "requiredSkills": [
+        "Compliance & Regulatory Knowledge",
+        "Legal Research",
+        "Attention to Detail",
+        "Critical Thinking"
+      ]
+    },
+    {
+      "key": "recruitment",
+      "companyKey": "peoplefirst",
+      "title": "Recruitment Intern",
+      "description": "Support candidate screening, recruitment coordination, and HR data updates.",
+      "dateOpened": "2026-10-05",
+      "status": "Open",
+      "requiredSkills": [
+        "Recruitment & Talent Management",
+        "Human Resources Information Systems (HRIS)",
+        "Communication",
+        "Teamwork & Collaboration"
+      ]
+    },
+    {
+      "key": "employee_relations",
+      "companyKey": "peoplefirst",
+      "title": "Employee Relations Intern",
+      "description": "Help organize employee-relations records and research workplace policies.",
+      "dateOpened": "2026-10-05",
+      "status": "Open",
+      "requiredSkills": [
+        "Employee Relations",
+        "Conflict Resolution",
+        "Human Resources Information Systems (HRIS)",
+        "Communication"
+      ]
+    },
+    {
+      "key": "accounting",
+      "companyKey": "coral_ledger",
+      "title": "Accounting Intern",
+      "description": "Assist with financial records, reconciliations, and monthly reporting.",
+      "dateOpened": "2026-10-05",
+      "status": "Open",
+      "requiredSkills": [
+        "Financial Accounting",
+        "Financial Analysis & Reporting",
+        "Microsoft Office",
+        "Attention to Detail"
+      ]
+    },
+    {
+      "key": "audit",
+      "companyKey": "coral_ledger",
+      "title": "Audit Intern",
+      "description": "Support audit preparation, evidence organization, and compliance reviews.",
+      "dateOpened": "2026-10-05",
+      "status": "Open",
+      "requiredSkills": [
+        "Auditing",
+        "Financial Accounting",
+        "Compliance & Regulatory Knowledge",
+        "Problem Solving"
+      ]
+    }
+  ],
+  "students": [
+    {
+      "key": "student_jane",
+      "studentID": 816000001,
+      "gpa": 3.61,
+      "degreeName": "BSc. Information Technology",
+      "expectedGraduationDate": "2027-06-30",
+      "resumeLink": "https://example.com/resumes/jane-doe",
+      "applicationStatus": "submitted",
+      "dateSubmitted": "2026-10-05",
+      "skills": [
+        "Cybersecurity",
+        "IT Support & Troubleshooting",
+        "Problem Solving",
+        "Communication"
+      ]
+    },
+    {
+      "key": "student_jordan",
+      "studentID": 816000002,
+      "gpa": 3.44,
+      "degreeName": "BSc. Engineering",
+      "expectedGraduationDate": "2027-06-30",
+      "resumeLink": "https://example.com/resumes/jordan-lee",
+      "applicationStatus": "submitted",
+      "dateSubmitted": "2026-10-05",
+      "skills": [
+        "Project Management",
+        "CAD & Engineering Design",
+        "Technical Documentation",
+        "Teamwork & Collaboration"
+      ]
+    },
+    {
+      "key": "student_amara",
+      "studentID": 816000003,
+      "gpa": 3.78,
+      "degreeName": "LLB",
+      "expectedGraduationDate": "2027-06-30",
+      "resumeLink": "https://example.com/resumes/amara-singh",
+      "applicationStatus": "submitted",
+      "dateSubmitted": "2026-10-05",
+      "skills": [
+        "Legal Research",
+        "Legal Writing & Drafting",
+        "Case Analysis",
+        "Communication",
+        "Critical Thinking"
+      ]
+    },
+    {
+      "key": "student_malik",
+      "studentID": 816000004,
+      "gpa": 3.32,
+      "degreeName": "BSc. Human Resource Management",
+      "expectedGraduationDate": "2027-06-30",
+      "resumeLink": "https://example.com/resumes/malik-brown",
+      "applicationStatus": "submitted",
+      "dateSubmitted": "2026-10-05",
+      "skills": [
+        "Recruitment & Talent Management",
+        "Human Resources Information Systems (HRIS)",
+        "Communication",
+        "Teamwork & Collaboration"
+      ]
+    },
+    {
+      "key": "student_casey",
+      "studentID": 816000005,
+      "gpa": 3.50,
+      "degreeName": "BSc. Management Studies",
+      "expectedGraduationDate": "2027-06-30",
+      "resumeLink": "https://example.com/resumes/casey-morgan",
+      "applicationStatus": "submitted",
+      "dateSubmitted": "2026-10-05",
+      "skills": [
+        "Leadership"
+      ]
+    },
+    {
+      "key": "student_renee",
+      "studentID": 816000006,
+      "gpa": 3.69,
+      "degreeName": "BSc. Accounting",
+      "expectedGraduationDate": "2027-06-30",
+      "resumeLink": "https://example.com/resumes/renee-thomas",
+      "applicationStatus": "submitted",
+      "dateSubmitted": "2026-10-05",
+      "skills": [
+        "Financial Accounting",
+        "Financial Analysis & Reporting",
+        "Microsoft Office",
+        "Attention to Detail",
+        "Communication"
+      ]
+    }
+  ],
+  "validationNotes": [
+    "All names, addresses, IDs, phone numbers, and email addresses are synthetic; company locations are in Trinidad.",
+    "Each of the five companies has exactly one representative account.",
+    "The six students have submitted applications on the cycle start date, October 5, 2026.",
+    "Student IDs are nine digits and start with 8160; Casey has no skills required by any sample position.",
+    "All 10 positions opened on October 5, 2026 and are open; they include role-specific technical skills plus shared soft skills.",
+    "No Match records are included so the coordinator can create matches during verification."
+  ]
+}
