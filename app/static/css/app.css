@@ -329,6 +329,125 @@ small {
   background: var(--brand-bg);
 }
 
+.application-back {
+  color: var(--brand-link);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.application-back:hover {
+  text-decoration: underline;
+}
+
+.cycle-status {
+  padding: 0.75rem 1.1rem !important;
+  border-color: var(--brand-border) !important;
+  color: var(--brand-primary) !important;
+  background: var(--brand-surface);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.dashboard-application-status {
+  min-height: 2rem;
+  padding: 0.55rem 0.9rem;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.application-empty-state {
+  min-height: 15rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.application-details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem 1.5rem;
+  margin-bottom: 0;
+}
+
+.application-details > div {
+  min-width: 0;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--brand-border);
+}
+
+.application-details dt {
+  margin-bottom: 0.35rem;
+  color: var(--brand-muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.application-details dd {
+  overflow-wrap: anywhere;
+}
+
+.application-detail-wide {
+  grid-column: 1 / -1;
+}
+
+.chosen-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  min-height: 2rem;
+}
+
+.chosen-skills-empty {
+  align-self: center;
+  color: var(--brand-muted);
+  font-size: 0.875rem;
+}
+
+.skill-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid var(--brand-border);
+  border-radius: 999px;
+  color: var(--brand-primary);
+  background: var(--brand-accent);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.skill-chip-remove {
+  display: inline-grid;
+  width: 1.2rem;
+  height: 1.2rem;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  color: var(--brand-primary-deep);
+  background: transparent;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.skill-chip-remove:hover,
+.skill-chip-remove:focus-visible {
+  color: var(--brand-link);
+  background: rgba(255, 255, 255, 0.65);
+}
+
+.session-expired-panel {
+  text-align: center;
+}
+
+.session-error-code {
+  color: var(--brand-link);
+  font-size: 0.9rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+}
+
 @media (max-width: 640px) {
   .landing-nav {
     align-items: flex-start;
@@ -367,6 +486,14 @@ small {
 
   .app-user {
     gap: 0.45rem;
+  }
+
+  .application-details {
+    grid-template-columns: 1fr;
+  }
+
+  .application-detail-wide {
+    grid-column: auto;
   }
 }
 

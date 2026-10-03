@@ -84,25 +84,20 @@ Defaults use a local SQLite file (`database.db`). Change `SECRET_KEY` before any
 
 ### 4. Initialise the database (Python CLI)
 
-Creates tables (drops existing by default) **and seeds demo users**:
+Creates tables (drops existing by default) and seeds the coursework internship cycle and skills:
 
 ```bash
 python manage.py init
 ```
 
-| Username | Password    | Role         |
-|----------|-------------|--------------|
-| `bob`    | `bobpass`   | regular_user |
-| `admin`  | `adminpass` | admin        |
-
 Flags:
 
 ```bash
-python manage.py init --no-drop   # create/seed without dropping
-python manage.py init --no-seed   # tables only (skip demo users)
+python manage.py init --no-drop   # create tables without dropping existing data
+python manage.py init --no-seed   # create tables and skip seed setup
 ```
 
-Seeding skips usernames that already exist. Add more rows in `cmd_seed` in `app/cli.py`. `python manage.py seed` still works if you only want to (re)insert demo users.
+`python manage.py seed` idempotently adds the single open internship cycle (October 5, 2026–May 5, 2027) and the configured skill list. It does not create demo accounts, student profiles, or applications. Register an account to sign in.
 
 ```bash
 python manage.py users
@@ -129,8 +124,8 @@ Commands are implemented in `app/cli.py` (stdlib `argparse`) and invoked via `ma
 
 | Command | Purpose |
 |---------|---------|
-| `python manage.py init` | Drop (default), create DB tables, and seed demo users |
-| `python manage.py seed` | Insert demo users only (also part of `init`) |
+| `python manage.py init` | Drop (default), create DB tables, and run configured seed setup |
+| `python manage.py seed` | Run configured seed setup (also part of `init`) |
 | `python manage.py run` | Start Uvicorn (reload unless `ENV=production`) |
 | `python manage.py users` | Print users in the DB |
 | `python manage.py transcripts` | Optional: package agent-written `docs/transcripts/*.md` into INDEX + zip (no IDE scrape) |

@@ -23,7 +23,7 @@ def _ensure_models_loaded() -> None:
 
 
 def cmd_init(args: argparse.Namespace) -> None:
-    """Create database tables (drops existing by default) and seed demo users."""
+    """Create database tables (drops existing by default) and run configured seeds."""
     from app.config import get_settings
     from app.database import drop_all, ensure_db_and_tables
 
@@ -47,47 +47,97 @@ def cmd_init(args: argparse.Namespace) -> None:
 
 
 def cmd_seed(args: argparse.Namespace) -> None:
-    """Insert demo users.
+    """Seed the internship cycle and skills used by the coursework workflow."""
+    from datetime import date
 
-    bob / bobpass       (regular_user)
-    admin / adminpass   (admin)
-    """
+    from sqlmodel import select
+
     from app.database import ensure_db_and_tables, get_cli_session
-    from app.repositories.user import UserRepository
-    from app.schemas.user import AdminCreate, RegularUserCreate
-    from app.utilities.security import encrypt_password
+    from app.models.application import InternshipCycle, Skill
 
     _ensure_models_loaded()
     ensure_db_and_tables()
 
-    demo_users = [
-        ("bob", "bob@example.com", "bobpass", "regular_user"),
-        ("admin", "admin@example.com", "adminpass", "admin"),
-    ]
+    skills = (
+        "Communication",
+        "Teamwork & Collaboration",
+        "Problem Solving",
+        "Critical Thinking",
+        "Time Management",
+        "Adaptability",
+        "Attention to Detail",
+        "Leadership",
+        "Project Management",
+        "Research & Analysis",
+        "Data Analysis",
+        "Microsoft Office",
+        "Programming & Coding",
+        "Database Management & SQL",
+        "Cybersecurity",
+        "Systems Analysis & Design",
+        "Technical Documentation",
+        "CAD & Engineering Design",
+        "Legal Research",
+        "Legal Writing & Drafting",
+        "Case Analysis",
+        "Compliance & Regulatory Knowledge",
+        "Recruitment & Talent Management",
+        "Employee Relations",
+        "Conflict Resolution",
+        "Financial Accounting",
+        "Financial Analysis & Reporting",
+        "Auditing",
+        "Human Resources Information Systems (HRIS)",
+        "IT Support & Troubleshooting",
+    )
+    cycle_start = date(2026, 10, 5)
+    cycle_end = date(2027, 5, 5)
 
-    created = 0
-    skipped = 0
     with get_cli_session() as session:
-        repo = UserRepository(session)
-        for username, email, password, role in demo_users:
-            if repo.get_by_username(username):
-                print(f"  skip  {username} (already exists)")
-                skipped += 1
-                continue
-            payload_cls = AdminCreate if role == "admin" else RegularUserCreate
-            repo.create(
-                payload_cls(
-                    username=username,
-                    email=email,
-                    password=encrypt_password(password),
-                    role=role,
+        cycles = session.exec(select(InternshipCycle)).all()
+        if len(cycles) > 1:
+            raise RuntimeError(
+                "Seed setup expects one internship cycle, "
+                f"but found {len(cycles)}."
+            )
+
+        created_cycle = not cycles
+        if created_cycle:
+            session.add(
+                InternshipCycle(
+                    startDate=cycle_start,
+                    endDate=cycle_end,
+                    status="Open",
                 )
             )
-            print(f"  create {username} ({role})")
-            created += 1
+        else:
+            cycle = cycles[0]
+            if (
+                cycle.startDate != cycle_start
+                or cycle.endDate != cycle_end
+                or cycle.status.casefold() != "open"
+            ):
+                raise RuntimeError(
+                    "The existing internship cycle does not match the "
+                    "configured seed cycle (2026-10-05 to 2027-05-05, Open). "
+                    "No existing cycle data was changed."
+                )
 
-    print(f"Seed done — created {created}, skipped {skipped}.")
-    print("Login with bob/bobpass or admin/adminpass")
+        existing_skill_names = {
+            skill.name for skill in session.exec(select(Skill)).all()
+        }
+        new_skills = [
+            Skill(name=name) for name in skills if name not in existing_skill_names
+        ]
+        session.add_all(new_skills)
+        session.commit()
+
+    cycle_action = "created" if created_cycle else "kept the existing"
+    print(
+        f"Seed data ready: {cycle_action} internship cycle "
+        f"({cycle_start.isoformat()} to {cycle_end.isoformat()}, Open); "
+        f"added {len(new_skills)} new skills."
+    )
 
 
 def cmd_run(args: argparse.Namespace) -> None:
@@ -215,13 +265,13 @@ def cmd_users(args: argparse.Namespace) -> None:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="python manage.py",
-        description="FastStarter Python CLI — init database, seed demo data, run the app.",
+        description="FastStarter Python CLI — initialize database, seed coursework data, run the app.",
     )
     sub = parser.add_subparsers(dest="command", required=True)
 
     p_init = sub.add_parser(
         "init",
-        help="Create DB tables and seed demo users (drops existing tables by default)",
+        help="Create DB tables and run configured seed setup (drops existing tables by default)",
     )
     p_init.add_argument(
         "--no-drop",
@@ -233,13 +283,13 @@ def build_parser() -> argparse.ArgumentParser:
         "--no-seed",
         dest="seed",
         action="store_false",
-        help="Skip demo user seed after creating tables",
+        help="Skip seed setup after creating tables",
     )
     p_init.set_defaults(drop=True, seed=True, func=cmd_init)
 
     p_seed = sub.add_parser(
         "seed",
-        help="Insert demo users only (idempotent; also runs as part of init)",
+        help="Run configured seed setup",
     )
     p_seed.set_defaults(func=cmd_seed)
 

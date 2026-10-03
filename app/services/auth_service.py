@@ -14,10 +14,19 @@ class AuthService:
         access_token = create_access_token(data={"sub": f"{user.id}", "role": user.role})
         return access_token
 
-    def register_user(self, username: str, email: str, password: str):
+    def register_user(
+        self,
+        username: str,
+        email: str,
+        password: str,
+        full_name: str,
+        number: str,
+    ):
         new_user = RegularUserCreate(
             username=username, 
             email=email, 
+            fullName=full_name,
+            number=number,
             password=encrypt_password(password)
         )
         return self.user_repo.create(new_user)

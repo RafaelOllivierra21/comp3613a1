@@ -12,7 +12,7 @@ class AdminCreate(UserBase):
     role:str = "admin"
 
 class RegularUserCreate(UserBase):
-    role:str = "regular_user"
+    role:str = "student"
 
 class UserResponse(SQLModel):
     id: int

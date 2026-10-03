@@ -6,6 +6,8 @@ from pydantic import EmailStr
 class UserBase(SQLModel,):
     username: str = Field(index=True, unique=True)
     email: EmailStr = Field(index=True, unique=True)
+    fullName: str
+    number: str
     password: str
     role:str = ""
 

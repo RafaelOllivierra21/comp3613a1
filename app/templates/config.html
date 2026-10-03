@@ -141,9 +141,6 @@
             <form method="post" action="{{ url_for('config_ping_db_action') }}">
                 <button class="btn btn-outline-info btn-sm" type="submit">Ping DB</button>
             </form>
-            <form method="post" action="{{ url_for('config_seed_action') }}">
-                <button class="btn btn-outline-success btn-sm" type="submit">Seed demo users</button>
-            </form>
             <form method="post" action="{{ url_for('config_dispose_pool_action') }}">
                 <button class="btn btn-outline-secondary btn-sm" type="submit">Dispose DB pool</button>
             </form>
@@ -177,10 +174,6 @@
             <div class="form-check mb-2">
                 <input class="form-check-input" type="checkbox" value="1" id="drop" name="drop">
                 <label class="form-check-label" for="drop">Drop all tables first</label>
-            </div>
-            <div class="form-check mb-3">
-                <input class="form-check-input" type="checkbox" value="1" id="seed" name="seed" checked>
-                <label class="form-check-label" for="seed">Seed demo users after</label>
             </div>
             <button class="btn btn-danger btn-sm" type="submit">Reinitialize DB</button>
         </form>

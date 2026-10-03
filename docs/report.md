@@ -30,12 +30,11 @@ Phase 2 decisions: Students apply to the general internship program, not to a sp
 
 ## Model diagram
 
-First draft. Update this section in Phase 5 when polish revises the model, and note what changed.
+Phase 3 draft, revised in Phase 5 as the workflow decisions were refined.
 
 ```mermaid
 erDiagram
     User ||--o| Student : account
-    User ||--o| Coordinator : account
     User ||--o| CompanyRep : account
 
     Company ||--o{ CompanyRep : employs
@@ -69,11 +68,6 @@ erDiagram
       string degreeName
       date expectedGraduationDate
       string resumeLink
-    }
-
-    Coordinator {
-      int coordinatorID PK
-      int userID FK
     }
 
     CompanyRep {
@@ -140,6 +134,16 @@ erDiagram
 Assumptions: the internship program runs only at the UWI St. Augustine campus and is open to students across all faculties; resumes are stored as a link rather than an uploaded file. Positions belong to the company and are tied to an internship cycle, so closing a cycle can close the related positions. The `Match` record remains separate from `Application` to track interviews, offers, and outcome states without losing the original application record.
 
 Phase 4 model review: the matching wireframe displays a fit percentage for suggested positions. This score will be calculated when suggestions are shown rather than stored on `Match`; no new model field is needed.
+
+Phase 5 model revisions requested by the student:
+
+- Remove `Coordinator`; coordinator identity is represented by `User.role`, so a separate coordinator table duplicates account information.
+- `Student.studentID` is entered as the student's UWI ID and is the primary key; it is not auto-generated. Reject duplicate UWI IDs with a friendly message.
+- Add a unique constraint on `Application(studentID, cycleID)` to enforce one application per student per cycle.
+- Add a unique constraint on `Match(applicationID, positionID)` to prevent duplicate matches for the same application and position.
+- Do not suggest or match a position again for a student after that student's previous match for the position was declined or rejected. Because this history can span applications, matching services must check prior match outcomes in addition to the per-application database uniqueness constraint.
+
+Internship Application decisions: students without an application see the empty dashboard and can apply. The student profile is created when the application is submitted; account details entered at registration supply the read-only profile details shown on the form. The student enters their UWI ID, which becomes `Student.studentID`. Once an application exists, hide the dashboard Apply action and show a route to the read-only application view. Check for an existing application before submission and enforce the student/cycle unique constraint in the database as a final guard; if a duplicate reaches that guard, redirect to the read-only application with a friendly “You have already applied for this cycle” message. A duplicate UWI ID is also rejected with a friendly message. The workflow uses the single internship cycle shown in the wireframe.
 
 ## Wireframes
 
@@ -243,6 +247,64 @@ The landing, login, and registration pages and authenticated navigation now use 
 
 One named workflow at a time. Include verify notes and polish / model revisions (Phase 5). Do not treat the first build as final.
 
+The starter `bob` and `admin` demo accounts are removed from the CLI and `/config` seed paths; `/config` remains available for the other server controls. The coursework seed setup adds one open internship cycle (October 5, 2026–May 5, 2027) and the student-provided skill list, but does not seed user accounts, student profiles, or applications. Removing the old seed definitions does not delete existing rows from a database.
+
+### Internship Application (in progress)
+
+Students with no existing application see the empty dashboard and can apply. Their `Student` row is created with the application; full name, email, and phone come from the account created at registration and are read-only on the application form. Existing applications open in a read-only view. The service prechecks for duplicates; the database constraint is the final guard, and a conflict returns the student to the read-only view with a friendly message. The coordinator table has been removed in favor of the role on `User`. The student/cycle constraint is implemented in the application model; Match uniqueness and declined/rejected-position exclusion are recorded above for the Student Matching workflow.
+
+Student-reported verification: invalid GPA and resume links were rejected; valid submissions succeeded. Reapplication attempts made in different ways were handled correctly, duplicate UWI IDs were rejected, and applications without selected skills were rejected. The student verified the themed 401 page, enlarged cycle status, removable single-click skill chips, and enlarged application-status badge. The student confirmed Workflow 1 is good.
+
+<!-- student-build:code-check
+workflow: Internship Application
+form: choice
+layer: other
+architecture_ok: yes
+implement_confidence: 0.65
+passed: yes
+note: Specified hidden Apply, existing-application precheck, database uniqueness, and duplicate redirect/message.
+-->
+
+<!-- student-build:code-check
+workflow: Internship Application
+form: open
+layer: model
+architecture_ok: yes
+implement_confidence: 0.70
+passed: yes
+note: Student record is created on first application; account details supply read-only profile information.
+-->
+
+<!-- student-build:code-check
+workflow: Internship Application
+form: mcq
+layer: service
+architecture_ok: yes
+implement_confidence: 0.80
+passed: yes
+note: Correctly selected Service to decide whether a repeat submission may proceed.
+-->
+
+<!-- student-build:code-check
+workflow: Internship Application
+form: snippet
+layer: model
+architecture_ok: yes
+implement_confidence: 0.82
+passed: yes
+note: Added a named composite unique constraint on Application(studentID, cycleID); student clarified UWI ID is manually entered and the Student primary key.
+-->
+
+<!-- student-build:code-check
+workflow: Internship Application
+form: snippet
+layer: router
+architecture_ok: yes
+implement_confidence: 0.84
+passed: yes
+note: Route constructs repository/service, passes form data, and maps domain errors to redirects without persistence code.
+-->
+
 ## Deployed app
 
 Phase 6. Public Render URL (not localhost). Markers open this to mark the three workflows.
@@ -251,10 +313,7 @@ https://
 
 ## Logins
 
-Every account a marker needs, including extra users you added. Starter accounts:
-
-- bob / bobpass — regular user
-- admin / adminpass — admin
+No marker or test accounts are seeded; students register an account through the application.
 
 ## YouTube URL
 

@@ -230,7 +230,6 @@ async def config_restart_action(request: Request):
 async def config_reinit_db_action(
     request: Request,
     drop: str = Form(""),
-    seed: str = Form(""),
 ):
     gate = _require_panel(request)
     if gate is not None:
@@ -240,39 +239,13 @@ async def config_reinit_db_action(
         if drop:
             drop_all()
         ensure_db_and_tables()
-        created = skipped = 0
-        if seed:
-            created, skipped = _seed_demo_users()
         msg = "Database reinitialized"
         if drop:
             msg += " (tables dropped)"
-        if seed:
-            msg += f"; seed created={created} skipped={skipped}"
         flash(request, msg, "success")
     except Exception as exc:  # noqa: BLE001
         flash(request, f"DB reinit failed: {exc}", "danger")
 
-    return RedirectResponse(
-        url=request.url_for("config_panel_view"),
-        status_code=status.HTTP_303_SEE_OTHER,
-    )
-
-
-@router.post("/config/actions/seed", name="config_seed_action")
-async def config_seed_action(request: Request):
-    gate = _require_panel(request)
-    if gate is not None:
-        return gate
-    try:
-        ensure_db_and_tables()
-        created, skipped = _seed_demo_users()
-        flash(
-            request,
-            f"Seed done — created {created}, skipped {skipped}",
-            "success",
-        )
-    except Exception as exc:  # noqa: BLE001
-        flash(request, f"Seed failed: {exc}", "danger")
     return RedirectResponse(
         url=request.url_for("config_panel_view"),
         status_code=status.HTTP_303_SEE_OTHER,
@@ -368,34 +341,3 @@ async def config_clear_cache_action(request: Request):
         url=request.url_for("config_panel_view"),
         status_code=status.HTTP_303_SEE_OTHER,
     )
-
-
-def _seed_demo_users() -> tuple[int, int]:
-    from app.database import get_cli_session
-    from app.repositories.user import UserRepository
-    from app.schemas.user import AdminCreate, RegularUserCreate
-    from app.utilities.security import encrypt_password
-
-    demo_users = [
-        ("bob", "bob@example.com", "bobpass", "regular_user"),
-        ("admin", "admin@example.com", "adminpass", "admin"),
-    ]
-    created = 0
-    skipped = 0
-    with get_cli_session() as session:
-        repo = UserRepository(session)
-        for username, email, password, role in demo_users:
-            if repo.get_by_username(username):
-                skipped += 1
-                continue
-            payload_cls = AdminCreate if role == "admin" else RegularUserCreate
-            repo.create(
-                payload_cls(
-                    username=username,
-                    email=email,
-                    password=encrypt_password(password),
-                    role=role,
-                )
-            )
-            created += 1
-    return created, skipped

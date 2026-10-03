@@ -9,11 +9,13 @@
     </a>
     <nav class="app-nav-links" aria-label="Main navigation">
         <a class="app-nav-link {{ 'active' if request.url.path == '/app' }}" href="{{ url_for('user_home_view') }}">Dashboard</a>
-        <a class="app-nav-link {{ 'active' if request.url.path.startswith('/app/application') }}" href="/app/application">Apply</a>
+        {% if user.role == "student" %}
+        <a class="app-nav-link {{ 'active' if request.url.path.startswith('/app/application') }}" href="{{ url_for('application_view') }}">Apply</a>
+        {% endif %}
     </nav>
     <div class="app-user">
         <span class="material-symbols-outlined" aria-hidden="true">account_circle</span>
-        <span class="fw-semibold">{{ user.username }}</span>
+        <span class="fw-semibold">{{ user.fullName or user.username }}</span>
         <a href="{{ url_for('logout') }}">Logout</a>
     </div>
 </header>

@@ -1,0 +1,107 @@
+{% extends "authenticated-base.html" %}
+{% block title %}{{ "Your Application" if read_only else "Apply for Internship Program" }} | InternBridge{% endblock %}
+
+{% block subpage_content %}
+<main class="container-fluid py-2">
+  <a class="application-back" href="{{ url_for('user_home_view') }}">← Dashboard</a>
+  {% if read_only %}
+  <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mt-3 mb-4">
+    <h1 class="h3 mb-0">Your Application</h1>
+    <div class="text-end">
+      <span class="badge text-bg-success">{{ state.application.status|title }}</span>
+      <p class="small mb-0 mt-1">Submitted: {{ state.application.dateSubmitted.strftime("%d/%m/%Y") }}</p>
+    </div>
+  </div>
+  {% else %}
+  <h1 class="h3 mt-3 mb-4">Apply for Internship Program</h1>
+  {% endif %}
+
+  <div class="row g-4">
+    <section class="col-lg-8">
+      <div class="card p-4 p-lg-5">
+        <h2 class="h5 mb-4">Your Details</h2>
+        {% if read_only %}
+        <dl class="application-details">
+          <div><dt>Student ID</dt><dd>{{ state.student.studentID }}</dd></div>
+          <div><dt>GPA</dt><dd>{{ "%.2f"|format(state.student.gpa) }}</dd></div>
+          <div><dt>Degree Name</dt><dd>{{ state.student.degreeName }}</dd></div>
+          <div><dt>Expected Graduation</dt><dd>{{ state.student.expectedGraduationDate.strftime("%d/%m/%Y") }}</dd></div>
+          <div class="application-detail-wide"><dt>Resume Link</dt><dd><a href="{{ state.student.resumeLink }}" target="_blank" rel="noopener noreferrer">{{ state.student.resumeLink }}</a></dd></div>
+          <div class="application-detail-wide">
+            <dt>Chosen Skills</dt>
+            <dd class="d-flex flex-wrap gap-2">
+              {% for skill in state.selected_skills %}
+              <span class="badge rounded-pill text-bg-light border border-success-subtle">{{ skill.name }}</span>
+              {% endfor %}
+            </dd>
+          </div>
+        </dl>
+        {% else %}
+        <form method="post" action="{{ url_for('submit_application') }}">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label" for="studentID">Student ID <span aria-hidden="true">*</span></label>
+              <input class="form-control" id="studentID" name="studentID" type="number" min="1" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="gpa">GPA <span aria-hidden="true">*</span></label>
+              <input class="form-control" id="gpa" name="gpa" type="number" min="0" max="4.3" step="0.01" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="degreeName">Degree Name <span aria-hidden="true">*</span></label>
+              <input class="form-control" id="degreeName" name="degreeName" type="text" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="expectedGraduationDate">Expected Graduation <span aria-hidden="true">*</span></label>
+              <input class="form-control" id="expectedGraduationDate" name="expectedGraduationDate" type="date" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label" for="resumeLink">Resume Link <span aria-hidden="true">*</span></label>
+              <input class="form-control" id="resumeLink" name="resumeLink" type="url" placeholder="https://" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label" for="skillPicker">Skills <span aria-hidden="true">*</span></label>
+              <select class="form-select" id="skillPicker" name="skillIDs">
+                <option value="">Select a skill</option>
+                {% for skill in state.available_skills %}
+                <option value="{{ skill.skillID }}">{{ skill.name }}</option>
+                {% endfor %}
+              </select>
+              <div class="mt-3">
+                <p class="form-label mb-2">Chosen Skills</p>
+                <div id="chosenSkills" class="chosen-skills" aria-live="polite">
+                  <span class="chosen-skills-empty">No skills selected yet.</span>
+                </div>
+              </div>
+              <div id="selectedSkillIDs"></div>
+              <div class="form-text mt-2">Select skills one at a time. Skills cannot be edited after submission.</div>
+            </div>
+            <div class="col-12 d-flex justify-content-end mt-4">
+              <button class="btn btn-primary btn-lg" type="submit">Submit Application</button>
+            </div>
+          </div>
+        </form>
+        {% endif %}
+      </div>
+    </section>
+
+    <aside class="col-lg-4">
+      <div class="card p-4">
+        <h2 class="h5 mb-3">Profile Details</h2>
+        <dl class="mb-0">
+          <dt>Full Name</dt>
+          <dd>{{ user.fullName }}</dd>
+          <dt>Email</dt>
+          <dd>{{ user.email }}</dd>
+          <dt>Phone</dt>
+          <dd class="mb-0">{{ user.number }}</dd>
+        </dl>
+      </div>
+    </aside>
+  </div>
+</main>
+{% endblock %}
+
+{% block external_js %}
+<script src="{{ url_for('static', path='js/application.js') }}"></script>
+{% endblock %}

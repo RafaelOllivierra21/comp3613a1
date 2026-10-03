@@ -1,9 +1,57 @@
 {% extends "authenticated-base.html" %}
-{% block title %}Home{% endblock %}
+{% block title %}Dashboard | InternBridge{% endblock %}
 
 {% block subpage_content %}
-<div class="container-fluid py-2">
-  <h1 class="h4 mb-2">Home</h1>
-  <p class="text-muted mb-0">Workflow screens replace this shell in Phase 5 implement.</p>
-</div>
+<main class="container-fluid py-2">
+  <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4">
+    <h1 class="h3 mb-0">Dashboard</h1>
+    <span class="badge rounded-pill cycle-status border">
+      Cycle Status: {{ "Open" if state.cycle_is_open else "Closed" }}
+    </span>
+  </div>
+
+  {% if state.cycle_is_open %}
+    {% if state.application %}
+    <div class="row g-4">
+      <section class="col-lg-7">
+        <div class="card h-100 p-4">
+          <h2 class="h5 mb-3">Matches</h2>
+          <div class="application-empty-state">
+            <p class="mb-1 fw-semibold">No matches yet</p>
+            <p class="mb-0 small">Positions appear here when a match is made.</p>
+          </div>
+        </div>
+      </section>
+      <section class="col-lg-5">
+        <div class="card h-100 p-4">
+          <h2 class="h5 mb-3">Your Application</h2>
+          <p class="mb-1">
+            <span class="badge text-bg-success dashboard-application-status">
+              {{ state.application.status|title }}
+            </span>
+          </p>
+          <p class="small mb-4">Submitted: {{ state.application.dateSubmitted.strftime("%d/%m/%Y") }}</p>
+          <a class="btn btn-primary mt-auto align-self-start" href="{{ url_for('application_view') }}">
+            Go to application
+          </a>
+        </div>
+      </section>
+    </div>
+    {% else %}
+    <section class="card application-empty-state p-5 text-center">
+      <p class="mb-4 fw-semibold">You have not applied yet.</p>
+      <a class="btn btn-primary btn-lg align-self-center" href="{{ url_for('application_view') }}">Apply</a>
+    </section>
+    {% endif %}
+  {% else %}
+  <section class="card application-empty-state p-5 text-center">
+    <p class="mb-0 fw-semibold">Applications are closed for this cycle.</p>
+    {% if state.application %}
+    <a class="btn btn-outline-secondary mt-4 align-self-center" href="{{ url_for('application_view') }}">
+      View your application
+    </a>
+    {% endif %}
+  </section>
+  {% endif %}
+</main>
 {% endblock %}
