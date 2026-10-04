@@ -92,6 +92,15 @@ small {
   border-color: #a9dfc5;
 }
 
+.btn-primary:disabled,
+.btn-primary.disabled {
+  color: #56636a;
+  background: #e5e9e9;
+  border-color: #cbd2d4;
+  opacity: 1;
+  cursor: not-allowed;
+}
+
 .btn-outline-secondary {
   color: var(--brand-link);
   border-color: #b6c9c2;
@@ -421,6 +430,16 @@ small {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+
+.candidate-empty-state {
+  min-height: 6rem;
+}
+
+.match-card {
+  border: 1px solid var(--brand-border);
+  border-radius: 0.85rem;
+  background: var(--brand-surface);
 }
 
 .application-details {

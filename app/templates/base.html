@@ -37,6 +37,15 @@
     </div>
 
     {% block external_js %}{% endblock %}
+    <script>
+        document.querySelectorAll("[data-auto-dismiss='flash-message']").forEach((element) => {
+            window.setTimeout(() => {
+                if (element.isConnected) {
+                    bootstrap.Alert.getOrCreateInstance(element).close();
+                }
+            }, 5000);
+        });
+    </script>
 </body>
 
 </html>

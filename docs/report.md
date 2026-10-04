@@ -275,6 +275,78 @@ Student-reported verification: the student tested Workflow 2 against its wirefra
 
 The student reports that all work for Workflows 1 and 2 is complete, verified, and follows the corresponding wireframes.
 
+### Candidate Selection (core behavior verified; polish recheck pending)
+
+Candidate Selection is shared by the Company Rep and Student, following `docs/wireframes/candidate_selection.png`. Company reps can view candidates only for positions owned by their company. Rep actions are Reject, Interview, and Offer; student actions are Accept or Decline an offer, with an explicit confirmation before acceptance because it cannot be undone.
+
+An accepted offer changes the selected Match to `accepted`, marks its Position `filled`, changes the student's Application to `placed`, closes that student's other matches as `closed - student placed elsewhere`, and closes other candidates' matches for the filled position as `closed - position filled`. A declined match is `declined by student`; a rejected match is `rejected by company`. A declined position remains available to other candidates, while a filled position does not. Only one candidate may have a pending offer for a position.
+
+An active match has status `matched`, `interviewing`, or `offered`. When a decline, company rejection, or another candidate's acceptance closing a match leaves the student's application with no active matches, set the application to `awaiting rematch` if the cycle is open and `not matched` if the cycle is closed. `awaiting rematch` returns to the coordinator's matching queue only while the cycle is open. Closing the cycle prevents new matches but does not block Company Rep or student actions on existing matches.
+
+Implementation: the Company Rep dashboard shows each rep's own positions and their candidates, with Interview, Offer, and Reject actions enabled for valid states. Students see all matches for their application on the dashboard; an offered match can be declined directly or accepted after confirming in the irreversible-action modal. Acceptance marks the position filled and application placed, and closes active competing matches. Rejection, decline, and match closure apply the no-active-match queue/status rule. The requested `NotACompanyRepError`, `MatchIDNotFoundError`, `MatchNotInCompanyError`, `InvalidActionError`, and `OfferAlreadyPendingError` are raised by the service. Existing-match actions remain available after cycle closure.
+
+Student-reported verification: company scoping, status-specific buttons, interview and offer transitions, independent offers at different companies, the acceptance confirmation, closing other matches, position-filled state, and coordinator dashboard statuses and counts all work. The Company Rep view groups candidates under each position, differing from the wireframe; the student prefers this clearer layout and asked to retain it. Further polish requested: flash messages on all pages should have a close control and fade after a few seconds, and offers for other candidates should appear disabled while that position already has a pending offer. These UI refinements are implemented and awaiting student recheck.
+
+<!-- student-build:code-check
+workflow: Candidate Selection
+form: open
+layer: other
+architecture_ok: yes
+implement_confidence: 0.82
+passed: yes
+note: Defined active-match statuses and no-active-match application transitions for declines, rejections, and position-filled closures.
+-->
+
+<!-- student-build:code-check
+workflow: Candidate Selection
+form: mcq
+layer: service
+architecture_ok: yes
+implement_confidence: 0.82
+passed: yes
+note: Correctly chose Service to coordinate offer acceptance and its related match/position/application transitions.
+-->
+
+<!-- student-build:code-check
+workflow: Candidate Selection
+form: choice
+layer: other
+architecture_ok: yes
+implement_confidence: 0.82
+passed: yes
+note: Restricted Company Rep candidate visibility and actions to positions belonging to the rep's company.
+-->
+
+<!-- student-build:code-check
+workflow: Candidate Selection
+form: choice
+layer: other
+architecture_ok: yes
+implement_confidence: 0.82
+passed: yes
+note: Confirmed a candidate whose only active match closes because another student fills the position follows the same cycle-aware application status rule.
+-->
+
+<!-- student-build:code-check
+workflow: Candidate Selection
+form: snippet
+layer: model
+architecture_ok: yes
+implement_confidence: 0.84
+passed: yes
+note: Set the new Match status default to matched, consistent with the matching workflow's initial state.
+-->
+
+<!-- student-build:code-check
+workflow: Candidate Selection
+form: snippet
+layer: router
+architecture_ok: yes
+implement_confidence: 0.86
+passed: yes
+note: Thin Company Rep action route delegates to CandidateSelectionService, maps domain errors, and redirects without persistence logic.
+-->
+
 <!-- student-build:code-check
 workflow: Internship Application
 form: choice

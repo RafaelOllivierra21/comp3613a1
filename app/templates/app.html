@@ -10,16 +10,68 @@
     </span>
   </div>
 
-  {% if state.cycle_is_open %}
-    {% if state.application %}
+  {% if state.application %}
     <div class="row g-4">
       <section class="col-lg-7">
         <div class="card h-100 p-4">
           <h2 class="h5 mb-3">Matches</h2>
+          {% if matches %}
+          <div class="d-flex flex-column gap-3">
+            {% for card in matches %}
+            <article class="match-card p-3">
+              <div class="d-flex align-items-start justify-content-between gap-3">
+                <div>
+                  <h3 class="h6 mb-1">{{ card.position.title }}</h3>
+                  <p class="small mb-2">{{ card.company.name }}</p>
+                </div>
+                <span class="badge rounded-pill {{ card.match.status|status_badge_class }}">
+                  {{ card.match.status|status_label }}
+                </span>
+              </div>
+              <p class="mb-3">{{ card.position.description }}</p>
+              {% if card.match.status|lower == "offered" %}
+              <div class="d-flex flex-wrap gap-2">
+                <form method="post" action="{{ url_for('student_match_action', match_id=card.match.matchID) }}">
+                  <input type="hidden" name="action" value="decline">
+                  <button class="btn btn-outline-secondary btn-sm" type="submit">Decline</button>
+                </form>
+                <button class="btn btn-primary btn-sm" type="button"
+                        data-bs-toggle="modal"
+                        data-bs-target="#accept-offer-{{ card.match.matchID }}">
+                  Accept
+                </button>
+              </div>
+              <div class="modal fade" id="accept-offer-{{ card.match.matchID }}" tabindex="-1"
+                   aria-labelledby="accept-offer-title-{{ card.match.matchID }}" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h2 class="modal-title fs-5" id="accept-offer-title-{{ card.match.matchID }}">Accept this offer?</h2>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cancel"></button>
+                    </div>
+                    <div class="modal-body">
+                      Accepting will close your other matches. This can't be undone.
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                      <form method="post" action="{{ url_for('student_match_action', match_id=card.match.matchID) }}">
+                        <input type="hidden" name="action" value="accept">
+                        <button class="btn btn-primary" type="submit">Confirm</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endif %}
+            </article>
+            {% endfor %}
+          </div>
+          {% else %}
           <div class="application-empty-state">
             <p class="mb-1 fw-semibold">No matches yet</p>
             <p class="mb-0 small">Positions appear here when a match is made.</p>
           </div>
+          {% endif %}
         </div>
       </section>
       <section class="col-lg-5">
@@ -37,20 +89,14 @@
         </div>
       </section>
     </div>
-    {% else %}
+  {% elif state.cycle_is_open %}
     <section class="card application-empty-state p-5 text-center">
       <p class="mb-4 fw-semibold">You have not applied yet.</p>
       <a class="btn btn-primary btn-lg align-self-center" href="{{ url_for('application_view') }}">Apply</a>
     </section>
-    {% endif %}
   {% else %}
   <section class="card application-empty-state p-5 text-center">
     <p class="mb-0 fw-semibold">Applications are closed for this cycle.</p>
-    {% if state.application %}
-    <a class="btn btn-outline-secondary mt-4 align-self-center" href="{{ url_for('application_view') }}">
-      View your application
-    </a>
-    {% endif %}
   </section>
   {% endif %}
 </main>

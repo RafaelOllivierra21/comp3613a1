@@ -32,7 +32,9 @@ class Match(SQLModel, table=True):
     applicationID: int = Field(foreign_key="application.applicationID")
     positionID: int = Field(foreign_key="position.positionID")
     matchDate: date
-    status: str
+    # STUDENT SNIPPET START: Candidate Selection's default Match status.
+    status: str = "matched"
+    # STUDENT SNIPPET END
 
     # STUDENT SNIPPET START: prevent duplicate application/position matches.
     __table_args__ = (

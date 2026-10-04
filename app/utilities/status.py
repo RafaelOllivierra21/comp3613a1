@@ -22,7 +22,10 @@ def status_badge_class(status: str) -> str:
         "not matched",
     }:
         return "status-badge status-negative"
-    if normalized_status in {"closed", "cycle closed", "position closed"}:
+    if (
+        normalized_status in {"closed", "cycle closed", "position closed"}
+        or normalized_status.startswith("closed ")
+    ):
         return "status-badge status-closed"
     return "status-badge status-neutral"
 

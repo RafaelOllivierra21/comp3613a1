@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_flash_messages.html" import render_flash_messages %}
 {% block title %}Sign in | InternBridge{% endblock %}
 
 {% block content %}
@@ -25,9 +26,7 @@
       </div>
     </form>
 
-    {% for message in get_flashed_messages(request) %}
-    <div class="alert alert-{{ message.type }} mb-0" role="alert">{{ message.message }}</div>
-    {% endfor %}
+    {{ render_flash_messages(request, "mt-3") }}
   </div>
 </div>
 {% endblock %}

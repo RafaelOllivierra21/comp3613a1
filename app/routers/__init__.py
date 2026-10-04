@@ -28,4 +28,5 @@ from . import (
     server_config,
     application,
     matching,
+    candidate_selection,
 )

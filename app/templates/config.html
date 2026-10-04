@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_flash_messages.html" import render_flash_messages %}
 {% block title %}Server config{% endblock %}
 
 {% block internal_css %}
@@ -72,9 +73,7 @@
             </div>
             <button class="btn btn-primary w-100" type="submit">Unlock</button>
         </form>
-        {% for message in get_flashed_messages(request) %}
-        <div class="alert alert-{{ message.type }} mt-3 mb-0" role="alert">{{ message.message }}</div>
-        {% endfor %}
+        {{ render_flash_messages(request, "mt-3") }}
     </div>
 
 {% else %}
@@ -88,9 +87,7 @@
         </form>
     </div>
 
-    {% for message in get_flashed_messages(request) %}
-    <div class="alert alert-{{ message.type }}" role="alert">{{ message.message }}</div>
-    {% endfor %}
+    {{ render_flash_messages(request, "mb-3") }}
 
     <div class="cfg-card">
         <h2>Status</h2>

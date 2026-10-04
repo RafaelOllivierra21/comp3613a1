@@ -1,0 +1,13 @@
+{% macro render_flash_messages(request, extra_classes="") %}
+  {% set messages = get_flashed_messages(request) %}
+  {% if messages %}
+  <div class="flash-messages {{ extra_classes }}">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.type }} alert-dismissible fade show flash-message" role="alert" data-auto-dismiss="flash-message">
+      {{ message.message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+{% endmacro %}

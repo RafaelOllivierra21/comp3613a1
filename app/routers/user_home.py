@@ -4,7 +4,9 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from app.dependencies.auth import AuthDep
 from app.dependencies.session import SessionDep
 from app.repositories.application import ApplicationRepository
+from app.repositories.candidate_selection import CandidateSelectionRepository
 from app.services.application_service import ApplicationService, NotAStudentError
+from app.services.candidate_selection_service import CandidateSelectionService
 from app.utilities.flash import flash
 from . import router, templates
 
@@ -18,6 +20,9 @@ async def user_home_view(
     service = ApplicationService(ApplicationRepository(db))
     try:
         state = service.get_dashboard_state(user)
+        matches = CandidateSelectionService(
+            CandidateSelectionRepository(db)
+        ).get_student_matches(user)
     except NotAStudentError:
         flash(request, "This dashboard is available to student accounts only.", "danger")
         return RedirectResponse(
@@ -31,6 +36,7 @@ async def user_home_view(
         context={
             "user": user,
             "state": state,
+            "matches": matches,
             "application_submitted": state.application is not None,
         },
     )

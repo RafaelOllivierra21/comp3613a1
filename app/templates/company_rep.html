@@ -1,0 +1,89 @@
+{% extends "authenticated-base.html" %}
+{% block title %}Positions | InternBridge{% endblock %}
+
+{% block subpage_content %}
+<main class="container-fluid py-2">
+  <h1 class="h3 mb-4">Positions</h1>
+  {% if state.positions %}
+  <div class="d-flex flex-column gap-4">
+    {% for position_card in state.positions %}
+    <section class="card p-3 p-lg-4">
+      <div class="row g-4">
+        <div class="col-lg-4">
+          <div class="d-flex align-items-start justify-content-between gap-2">
+            <h2 class="h5 mb-1">{{ position_card.position.title }}</h2>
+            <span class="badge rounded-pill {{ position_card.position.status|status_badge_class }}">
+              {{ position_card.position.status|status_label }}
+            </span>
+          </div>
+          <p class="small mb-2">{{ position_card.position.description }}</p>
+          <p class="small mb-0">
+            Opened: {{ position_card.position.dateOpened.strftime("%d/%m/%Y") }}
+            <span class="ms-2">{{ "%02d"|format(position_card.candidates|length) }} candidates</span>
+          </p>
+        </div>
+        <div class="col-lg-8">
+          <h3 class="h6 mb-3">Candidates</h3>
+          {% if position_card.candidates %}
+          <div class="d-flex flex-column gap-3">
+            {% for candidate in position_card.candidates %}
+            <article class="match-card p-3">
+              <div class="d-flex flex-wrap align-items-start justify-content-between gap-3">
+                <div>
+                  <h4 class="h6 mb-1">{{ candidate.student_user.fullName or candidate.student_user.username }}</h4>
+                  <p class="small mb-1">
+                    Degree: {{ candidate.student.degreeName }}
+                    <span class="ms-2">GPA: {{ "%.2f"|format(candidate.student.gpa) }}</span>
+                  </p>
+                  <p class="small mb-1">{{ candidate.student_user.number }} · {{ candidate.student_user.email }}</p>
+                  <a class="small" href="{{ candidate.student.resumeLink }}" target="_blank" rel="noopener noreferrer">Resume link</a>
+                </div>
+                <span class="badge rounded-pill {{ candidate.match.status|status_badge_class }}">
+                  {{ candidate.match.status|status_label }}
+                </span>
+              </div>
+              {% if candidate.match.status|lower == "matched" %}
+              <div class="d-flex justify-content-end gap-2 mt-3">
+                <form method="post" action="{{ url_for('company_candidate_action', match_id=candidate.match.matchID) }}">
+                  <input type="hidden" name="action" value="reject">
+                  <button class="btn btn-outline-secondary btn-sm" type="submit">Reject</button>
+                </form>
+                <form method="post" action="{{ url_for('company_candidate_action', match_id=candidate.match.matchID) }}">
+                  <input type="hidden" name="action" value="interview">
+                  <button class="btn btn-primary btn-sm" type="submit">Interview</button>
+                </form>
+              </div>
+              {% elif candidate.match.status|lower == "interviewing" %}
+              <div class="d-flex justify-content-end gap-2 mt-3">
+                <form method="post" action="{{ url_for('company_candidate_action', match_id=candidate.match.matchID) }}">
+                  <input type="hidden" name="action" value="reject">
+                  <button class="btn btn-outline-secondary btn-sm" type="submit">Reject</button>
+                </form>
+                <form method="post" action="{{ url_for('company_candidate_action', match_id=candidate.match.matchID) }}">
+                  <input type="hidden" name="action" value="offer">
+                  <button class="btn btn-primary btn-sm" type="submit" {% if position_card.offer_pending %}disabled title="An offer is already pending for this position."{% endif %}>Offer</button>
+                </form>
+              </div>
+              {% elif candidate.match.status|lower == "offered" %}
+              <p class="small text-end mt-3 mb-0">Awaiting student response</p>
+              {% endif %}
+            </article>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="application-empty-state candidate-empty-state">
+            <p class="mb-0">No candidates yet.</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </section>
+    {% endfor %}
+  </div>
+  {% else %}
+  <section class="card application-empty-state p-5 text-center">
+    <p class="mb-0 fw-semibold">You have no positions yet.</p>
+  </section>
+  {% endif %}
+</main>
+{% endblock %}
