@@ -12,6 +12,7 @@
       <a class="btn-landing btn-landing-teal" href="{{ app_home }}">Open app</a>
       <a class="btn-landing btn-landing-teal" href="{{ url_for('logout') }}">Sign out</a>
       {% else %}
+      <a class="btn-landing btn-landing-primary btn-landing-register" href="{{ url_for('register_view') }}">Students: Create an Account</a>
       <a class="btn-landing btn-landing-teal btn-landing-sign-in" href="{{ url_for('login_view') }}">Sign in</a>
       {% endif %}
     </div>
@@ -27,8 +28,6 @@
       <div class="landing-cta">
         {% if user_logged_in %}
         <a class="btn-landing btn-landing-primary" href="{{ app_home }}">Continue to app</a>
-        {% else %}
-        <a class="btn-landing btn-landing-primary btn-landing-register" href="{{ url_for('register_view') }}">Students: Create an Account</a>
         {% endif %}
       </div>
     </section>
