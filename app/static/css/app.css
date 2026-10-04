@@ -4,11 +4,12 @@
   --brand-primary-deep: #102229;
   --brand-accent: #c3e8cf;
   --brand-link: #17603e;
-  --brand-bg: #f7f7f2;
+  --brand-bg: #f8f6ee;
   --brand-surface: #ffffff;
   --brand-ink: #19332f;
   --brand-muted: #566a6f;
-  --brand-border: #c3e8cf;
+  --brand-border: #e9e2d2;
+  --bs-border-color: var(--brand-border);
   --brand-sidebar: #172d36;
   --brand-sidebar-text: #d3e3df;
   --brand-font-body: "Manrope", "Segoe UI", sans-serif;
@@ -65,7 +66,7 @@ small {
 .form-control,
 .form-select {
   min-height: 2.85rem;
-  border-color: #d7e2de;
+  border-color: var(--brand-border);
   border-radius: 0.7rem;
   color: var(--brand-ink);
 }
@@ -103,7 +104,7 @@ small {
 
 .btn-outline-secondary {
   color: var(--brand-link);
-  border-color: #b6c9c2;
+  border-color: var(--brand-border);
 }
 
 .btn-outline-secondary:hover {
@@ -141,7 +142,7 @@ small {
   gap: 1.5rem;
   min-height: 5.5rem;
   padding: 1rem clamp(1.25rem, 5vw, 4.5rem);
-  border-bottom: 1px solid #e2e9e5;
+  border-bottom: 1px solid var(--brand-border);
   background: var(--brand-bg);
 }
 
@@ -188,7 +189,7 @@ small {
 
 .btn-landing-ghost {
   color: var(--brand-link);
-  border-color: #b6c9c2;
+  border-color: var(--brand-border);
   background: transparent;
 }
 
@@ -235,7 +236,7 @@ small {
 
 .landing-foot {
   padding: 1.25rem clamp(1.25rem, 5vw, 4.5rem);
-  border-top: 1px solid #e2e9e5;
+  border-top: 1px solid var(--brand-border);
   color: var(--brand-muted);
   font-size: 0.9rem;
 }

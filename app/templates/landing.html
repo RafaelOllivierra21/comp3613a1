@@ -13,7 +13,6 @@
       <a class="btn-landing btn-landing-teal" href="{{ url_for('logout') }}">Sign out</a>
       {% else %}
       <a class="btn-landing btn-landing-teal" href="{{ url_for('login_view') }}">Sign in</a>
-      <a class="btn-landing btn-landing-primary" href="{{ url_for('register_view') }}">Get started</a>
       {% endif %}
     </div>
   </header>
@@ -22,14 +21,13 @@
     <p class="landing-kicker">Internship Platform</p>
     <h1>Your Field. Your Future. Connected.</h1>
     <p class="landing-lead">
-      InternBridge brings students, coordinators, and employers together around meaningful internship opportunities.
+      InternBridge brings students, coordinators, and company reps together around meaningful internship opportunities.
     </p>
     <div class="landing-cta">
       {% if user_logged_in %}
       <a class="btn-landing btn-landing-primary" href="{{ app_home }}">Continue to app</a>
       {% else %}
-      <a class="btn-landing btn-landing-primary" href="{{ url_for('register_view') }}">Create account</a>
-      <a class="btn-landing btn-landing-teal" href="{{ url_for('login_view') }}">Sign in</a>
+      <a class="btn-landing btn-landing-primary" href="{{ url_for('register_view') }}">Students: create an account</a>
       {% endif %}
     </div>
   </main>
