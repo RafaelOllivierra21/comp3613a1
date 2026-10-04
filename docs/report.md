@@ -535,7 +535,22 @@ https://
 
 ## Logins
 
-No sample accounts or preloaded sample records are provided. To test the Internship Application workflow, register a student account.
+The following synthetic marker accounts are loaded by `seed-sample` when the Render service starts. Shared password: `Internbridge2026`.
+
+| Username | Role |
+|---|---|
+| `coordinator.demo` | Coordinator |
+| `rep.bluepeak` | Company Rep |
+| `rep.islandgrid` | Company Rep |
+| `rep.seabright` | Company Rep |
+| `rep.peoplefirst` | Company Rep |
+| `rep.coralledger` | Company Rep |
+| `student.jane` | Student |
+| `student.jordan` | Student |
+| `student.amara` | Student |
+| `student.malik` | Student |
+| `student.casey` | Student |
+| `student.renee` | Student |
 
 ## YouTube URL
 

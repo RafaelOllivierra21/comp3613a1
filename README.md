@@ -178,11 +178,14 @@ Service shape lives in [`render.yaml`](render.yaml) (Blueprint reference for the
    - `SECRET_KEY` — long random string
    - `ENV` — `production`
    - `PYTHON_VERSION` — `3.12.7`
+   - `INTERNBRIDGE_SAMPLE_PASSWORD` — `Internbridge2026`, shared password for the synthetic marker accounts in `docs/sample-data.json`
 5. Start command (do not drop tables on each boot):
 
 ```bash
-python manage.py init --no-drop && python manage.py run --host 0.0.0.0 --port $PORT
+python manage.py init --no-drop; python manage.py seed-sample; python manage.py run --host 0.0.0.0 --port $PORT
 ```
+
+The Render blueprint sets `INTERNBRIDGE_SAMPLE_PASSWORD` to `Internbridge2026` for the marker accounts. The semicolon-separated startup commands allow the app to start if reseeding the one-time internship cycle fails after a coordinator closes it; `seed-sample` adds or keeps the repeat-safe marker fixture.
 
 6. Confirm the deploy is live and `GET /health` succeeds. Put the public URL and the marker logins (username, password, role) in `docs/report.md`.
 
