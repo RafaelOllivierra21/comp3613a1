@@ -6,7 +6,7 @@
 
 services:
   - type: web
-    name: faststarter
+    name: internbridge
     runtime: python
     plan: free
     region: oregon
