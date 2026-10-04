@@ -7,7 +7,7 @@ from jinja2 import Environment, FileSystemLoader
 from app.config import get_settings
 
 
-template_env = Environment(loader = FileSystemLoader("app/templates",), )
+template_env = Environment(loader=FileSystemLoader("app/templates"))
 template_env.globals['get_flashed_messages'] = get_flashed_messages
 template_env.filters["status_badge_class"] = status_badge_class
 template_env.filters["status_label"] = status_label
@@ -29,4 +29,5 @@ from . import (
     application,
     matching,
     candidate_selection,
+    position_posting,
 )

@@ -275,7 +275,7 @@ Student-reported verification: the student tested Workflow 2 against its wirefra
 
 The student reports that all work for Workflows 1 and 2 is complete, verified, and follows the corresponding wireframes.
 
-### Candidate Selection (core behavior verified; polish recheck pending)
+### Candidate Selection (complete and verified)
 
 Candidate Selection is shared by the Company Rep and Student, following `docs/wireframes/candidate_selection.png`. Company reps can view candidates only for positions owned by their company. Rep actions are Reject, Interview, and Offer; student actions are Accept or Decline an offer, with an explicit confirmation before acceptance because it cannot be undone.
 
@@ -285,7 +285,49 @@ An active match has status `matched`, `interviewing`, or `offered`. When a decli
 
 Implementation: the Company Rep dashboard shows each rep's own positions and their candidates, with Interview, Offer, and Reject actions enabled for valid states. Students see all matches for their application on the dashboard; an offered match can be declined directly or accepted after confirming in the irreversible-action modal. Acceptance marks the position filled and application placed, and closes active competing matches. Rejection, decline, and match closure apply the no-active-match queue/status rule. The requested `NotACompanyRepError`, `MatchIDNotFoundError`, `MatchNotInCompanyError`, `InvalidActionError`, and `OfferAlreadyPendingError` are raised by the service. Existing-match actions remain available after cycle closure.
 
-Student-reported verification: company scoping, status-specific buttons, interview and offer transitions, independent offers at different companies, the acceptance confirmation, closing other matches, position-filled state, and coordinator dashboard statuses and counts all work. The Company Rep view groups candidates under each position, differing from the wireframe; the student prefers this clearer layout and asked to retain it. Further polish requested: flash messages on all pages should have a close control and fade after a few seconds, and offers for other candidates should appear disabled while that position already has a pending offer. These UI refinements are implemented and awaiting student recheck.
+Student-reported verification: company scoping, status-specific buttons, interview and offer transitions, independent offers at different companies, the acceptance confirmation, closing other matches, position-filled state, and coordinator dashboard statuses and counts all work. The Company Rep view groups candidates under each position, differing from the wireframe; the student prefers this clearer layout and asked to retain it. Polish added close controls and five-second auto-dismiss behavior to flash messages across their display surfaces, and disables other candidates' Offer buttons while a position already has a pending offer. The student rechecked and confirmed the refinements; Workflow 3 is complete and verified.
+
+### Post Open Positions (supporting workflow; complete and verified)
+
+The Company Rep posts positions for the company linked to their account. The form follows `docs/wireframes/post_position.png`: required title and description, at least one skill selected from the existing skill list, and a read-only posting-as panel showing the company and active internship-cycle dates. A successful post returns to the Company Rep Positions dashboard. Submitted positions cannot be edited. Posting is unavailable when the internship cycle is closed; the Post Position navigation link remains visible but disabled with an explanation.
+
+The existing `Position` and `PositionSkill` entities represent postings and their required skills. A posted position belongs to the authenticated rep's company and the open cycle, opens with status `open`, and records the posting date. No new database entity is needed.
+
+Implementation: added the `post_position_view` page at `/rep/positions/new` and a thin POST handler. The form uses the existing skill picker/chip behavior and displays the authenticated rep's company and open cycle dates. `PositionPostingService` validates the authenticated company rep, open cycle, trimmed non-empty title and description, and a non-empty set of existing, unique skills. It raises `InvalidTitleInputError`, `InvalidDescriptionInputError`, and `InvalidSkillInputError`; the route reuses `NotACompanyRepError` and `CycleClosedError`. The repository saves the Position and PositionSkill rows in one transaction. The dashboard's Post Position link is disabled with a closed-cycle explanation when unavailable.
+
+Student-reported verification: the posting company and cycle details are correct; blank and whitespace-only titles/descriptions and no-skill submissions are rejected; valid postings succeed, appear under the correct Company Rep with zero candidates, and are available in the coordinator's suggested positions. The initial valid post failure was caused by a mismatch between the posting field name (`skill_ids`) and the shared skill-picker's `skillIDs`; the form and route now use `skillIDs` consistently.
+
+The closed-cycle disabled-link behavior cannot yet be verified because the Close Internship Cycle workflow is not implemented; defer that check until that workflow is available. The student also requested the wireframe's read-only profile dropdown with name, email, phone, role, and Log out, available across authenticated screens and roles; it replaces the former inline Logout link while keeping the inline name. The Log out action has a dark-teal fill and white text. Student-reported verification: the profile menu works as expected across roles, and the supporting Post Open Positions workflow is complete and verified.
+
+<!-- student-build:code-check
+workflow: Post Open Positions
+form: snippet
+layer: model
+architecture_ok: yes
+implement_confidence: 0.84
+passed: yes
+note: Added non-empty minimum-length model validation to the required Position title and description fields.
+-->
+
+<!-- student-build:code-check
+workflow: Post Open Positions
+form: snippet
+layer: router
+architecture_ok: yes
+implement_confidence: 0.86
+passed: yes
+note: Thin posting handler delegates title, description, and selected skill IDs to PositionPostingService, maps domain errors, and redirects without persistence logic.
+-->
+
+<!-- student-build:code-check
+workflow: Post Open Positions
+form: choice
+layer: other
+architecture_ok: yes
+implement_confidence: 0.86
+passed: yes
+note: Chose to keep Post Position visible but disabled with an explanation when the cycle is closed.
+-->
 
 <!-- student-build:code-check
 workflow: Candidate Selection

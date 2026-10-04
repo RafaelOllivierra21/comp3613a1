@@ -328,16 +328,77 @@ small {
   border-bottom-color: var(--brand-accent);
 }
 
+.app-nav-link-disabled {
+  color: var(--brand-sidebar-text);
+  opacity: 0.72;
+  cursor: not-allowed;
+}
+
+.app-nav-disabled-note {
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
 .app-user {
   white-space: nowrap;
 }
 
-.app-user .material-symbols-outlined {
+.app-profile-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.2rem;
+  border: 0;
+  color: #ffffff;
+  background: transparent;
+  font: inherit;
+}
+
+.app-profile-toggle:hover,
+.app-profile-toggle:focus-visible {
   color: var(--brand-accent);
 }
 
-.app-user a:hover {
+.app-profile-toggle .material-symbols-outlined {
   color: var(--brand-accent);
+}
+
+.app-profile-menu {
+  width: min(20rem, calc(100vw - 2rem));
+  border: 1px solid var(--brand-border);
+  border-radius: 0.85rem;
+  box-shadow: var(--brand-shadow);
+}
+
+.app-profile-details {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.app-profile-details dt {
+  color: var(--brand-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.app-profile-details dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: var(--brand-ink);
+}
+
+.btn-profile-logout {
+  color: #ffffff;
+  background: var(--brand-primary);
+  border-color: var(--brand-primary);
+  font-weight: 700;
+}
+
+.btn-profile-logout:hover,
+.btn-profile-logout:focus-visible {
+  color: #ffffff;
+  background: var(--brand-primary-deep);
+  border-color: var(--brand-primary-deep);
 }
 
 #content {

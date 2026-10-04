@@ -10,7 +10,12 @@
     </a>
     <nav class="app-nav-links" aria-label="Main navigation">
         {% if user.role == "company_rep" %}
-        <a class="app-nav-link {{ 'active' if request.url.path.startswith('/rep') }}" href="{{ url_for('company_rep_dashboard_view') }}">Positions</a>
+        <a class="app-nav-link {{ 'active' if request.url.path == '/rep/positions' }}" href="{{ url_for('company_rep_dashboard_view') }}">Positions</a>
+        {% if state is defined and state.cycle_is_open %}
+        <a class="app-nav-link {{ 'active' if request.url.path == '/rep/positions/new' }}" href="{{ url_for('post_position_view') }}">Post Position</a>
+        {% else %}
+        <span class="app-nav-link app-nav-link-disabled" aria-disabled="true" title="Unavailable while the internship cycle is closed">Post Position <span class="app-nav-disabled-note">(Cycle closed)</span></span>
+        {% endif %}
         {% elif user.role == "coordinator" %}
         <a class="app-nav-link {{ 'active' if request.url.path == '/admin' or request.url.path.startswith('/admin/applications') }}" href="{{ url_for('admin_home_view') }}">Applications</a>
         {% elif user.role == "admin" %}
@@ -20,10 +25,32 @@
         <a class="app-nav-link {{ 'active' if request.url.path.startswith('/app/application') }}" href="{{ url_for('application_view') }}">Apply</a>
         {% endif %}
     </nav>
-    <div class="app-user">
-        <span class="material-symbols-outlined" aria-hidden="true">account_circle</span>
-        <span class="fw-semibold">{{ user.fullName or user.username }}</span>
-        <a href="{{ url_for('logout') }}">Logout</a>
+    <div class="dropdown app-user">
+        <button class="app-profile-toggle" id="profileMenuButton" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Open profile menu">
+            <span class="material-symbols-outlined" aria-hidden="true">account_circle</span>
+            <span class="fw-semibold">{{ user.fullName or user.username }}</span>
+        </button>
+        <div class="dropdown-menu dropdown-menu-end app-profile-menu p-3" aria-labelledby="profileMenuButton">
+            <dl class="app-profile-details mb-3">
+                <div>
+                    <dt>Full Name</dt>
+                    <dd>{{ user.fullName or user.username }}</dd>
+                </div>
+                <div>
+                    <dt>Email</dt>
+                    <dd>{{ user.email }}</dd>
+                </div>
+                <div>
+                    <dt>Phone</dt>
+                    <dd>{{ user.number }}</dd>
+                </div>
+                <div>
+                    <dt>Role</dt>
+                    <dd>{{ user.role|replace("_", " ")|title }}</dd>
+                </div>
+            </dl>
+            <a class="btn btn-profile-logout w-100" href="{{ url_for('logout') }}">Log out</a>
+        </div>
     </div>
 </header>
 

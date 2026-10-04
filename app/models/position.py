@@ -21,8 +21,10 @@ class Position(SQLModel, table=True):
     positionID: Optional[int] = Field(default=None, primary_key=True)
     companyID: int = Field(foreign_key="company.companyID")
     cycleID: int = Field(foreign_key="internshipcycle.cycleID")
-    title: str
-    description: str
+    # STUDENT SNIPPET START: model-level validation for required posting inputs.
+    title: str = Field(min_length=1)
+    description: str = Field(min_length=1)
+    # STUDENT SNIPPET END
     dateOpened: date
     status: str
 

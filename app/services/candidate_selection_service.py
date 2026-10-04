@@ -63,6 +63,7 @@ class CompanyCandidateCard:
 @dataclass(frozen=True)
 class CompanyRepDashboardState:
     positions: list[CompanyPositionCard]
+    cycle_is_open: bool
 
 
 class CandidateSelectionService:
@@ -101,7 +102,11 @@ class CandidateSelectionService:
                 self._normalize_status(candidate.match.status) == "offered"
                 for candidate in card.candidates
             )
-        return CompanyRepDashboardState(positions=list(position_cards.values()))
+        cycle = self.candidate_selection_repository.get_current_cycle()
+        return CompanyRepDashboardState(
+            positions=list(position_cards.values()),
+            cycle_is_open=cycle is not None and cycle.status.strip().casefold() == "open",
+        )
 
     def get_student_matches(self, user: User) -> list[StudentMatchCard]:
         self._require_student(user)
