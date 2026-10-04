@@ -241,7 +241,7 @@ covered: yes
 
 ## Theming
 
-InternBridge uses a modern, professional visual identity. The main color is dark teal (`#172D36`), with mint (`#C3E8CF`) for filled accents, dark green for links, warm off-white (`#F8F6EE`) page backgrounds, white (`#FFFFFF`) cards, muted grey (`#566A6F`) for small text, and warm neutral (`#E9E2D2`) borders. Manrope is loaded from Google Fonts. The light logo is used on the landing, login, and registration pages; the primary logo is used in the authenticated dark-teal navigation, and the InternBridge favicon is set site-wide. Logos appear without background boxes. The landing page identifies employers as company reps, has a single Sign in button in the header, and labels the registration action “Students: create an account.” The browser title is InternBridge; the landing page presents the tagline “Your Field. Your Future. Connected.”
+InternBridge uses a modern, professional visual identity. The main color is dark teal (`#172D36`), with mint (`#C3E8CF`) for filled accents, dark green for links, warm off-white (`#F8F6EE`) page backgrounds, white (`#FFFFFF`) cards, muted grey (`#566A6F`) for small text, and warm neutral (`#E9E2D2`) borders. Manrope is loaded from Google Fonts. The light logo is used on the landing, login, and registration pages; the primary logo is used in the authenticated dark-teal navigation, and the InternBridge favicon is set site-wide. Logos appear without background boxes. The landing page identifies employers as company reps, has a larger single Sign in button in the header, and labels the enlarged registration action “Students: Create an Account.” The headline is arranged as “Your Field.”, “Your Future.”, and “Connected.” on three consecutive lines without changing its text size. Its slightly reduced right-side bridge illustration connects a Jane Doe applicant card to IslandGrid's Software Engineering Intern card, with a thinner dark-teal semicircular arch, straight legs that stop at the deck, and a deck line matching the logo. The mint dot follows the legs and arch from the student card to the company card. A “Matched by coordinator” label sits above the arch, with a check badge at the arch apex and a raised “Offer accepted” chip. The four-second animation plays once and settles into its completed state; the illustration is shifted slightly right on desktop. The browser title is InternBridge; the landing page presents the tagline “Your Field. Your Future. Connected.”
 
 The landing, login, and registration pages and authenticated navigation now use these brand styles. The signed-in navigation follows the wireframe's horizontal logo / Dashboard / Apply / profile layout. The placeholder FastStarter landing copy and demo-login footer have been removed; authentication and `/config` remain available.
 
@@ -249,9 +249,7 @@ Status badges follow the InternBridge palette: `Submitted`, `Matched`, `Intervie
 
 ## Implementation notes
 
-One named workflow at a time. Include verify notes and polish / model revisions (Phase 5). Do not treat the first build as final.
-
-The starter `bob` and `admin` demo accounts are removed from the CLI and `/config` seed paths; `/config` remains available for the other server controls. The coursework seed setup adds one open internship cycle (October 5, 2026–May 5, 2027) and the student-provided skill list, but does not seed user accounts, student profiles, or applications. Removing the old seed definitions does not delete existing rows from a database.
+Phase 5 is complete. All three named workflows—Internship Application, Student Matching, and Candidate Selection—and both supporting workflows—Post Open Positions and Close Internship Cycle—are implemented, student-verified, and polished against the agreed designs.
 
 ### Internship Application (complete and verified)
 
@@ -267,9 +265,7 @@ When the coordinator clicks Match, create a `Match` row with status `matched`; c
 
 The matching view follows the wireframe's coordinator dashboard and matching-screen states, including student details, current matches and their outcomes, the Suggested Positions list, the expandable all-open-positions list, and the empty states for no suggestions or no open positions.
 
-Implementation: fit is computed on each matching-screen request. The screen presents up to three highest-ranked positive-fit suggestions and keeps the remaining open positions in the expandable list; existing matches are shown separately. Matching creates the unique `Match` record, updates the application to `matched` when needed, and leaves the position open. The coordinator dashboard's Close cycle control is displayed but disabled until the Close Internship Cycle workflow is implemented.
-
-Sample matching data is defined in `docs/sample-data.json`. After the student approved the fixture, `python manage.py seed-sample` imported 12 accounts, five companies and company-rep relationships, ten positions, and six student applications into the existing local database without dropping existing tables or accounts. The shared password was supplied only through a temporary local environment variable and hashed with the registration password helper; it is not stored in the fixture or report. A second seed run added zero records, confirming repeat-safe behavior. The fixture includes Trinidad company locations, nine-digit student IDs beginning `8160`, `868` phone numbers, and October 5, 2026 position-opening/application-submission dates.
+Implementation: fit is computed on each matching-screen request. The screen presents up to three highest-ranked positive-fit suggestions and keeps the remaining open positions in the expandable list; existing matches are shown separately. Matching creates the unique `Match` record, updates the application to `matched` when needed, and leaves the position open.
 
 Student-reported verification: the student tested Workflow 2 against its wireframe, reported the missing visible application-status badge and that active-match counts should include `matched`, `interviewing`, and `offered` matches, and then re-verified the fixes. The student confirmed the workflow works as expected and confirmed the status-color palette shown in the Theming section.
 
@@ -297,7 +293,7 @@ Implementation: added the `post_position_view` page at `/rep/positions/new` and 
 
 Student-reported verification: the posting company and cycle details are correct; blank and whitespace-only titles/descriptions and no-skill submissions are rejected; valid postings succeed, appear under the correct Company Rep with zero candidates, and are available in the coordinator's suggested positions. The initial valid post failure was caused by a mismatch between the posting field name (`skill_ids`) and the shared skill-picker's `skillIDs`; the form and route now use `skillIDs` consistently.
 
-The closed-cycle disabled-link behavior cannot yet be verified because the Close Internship Cycle workflow is not implemented; defer that check until that workflow is available. The student also requested the wireframe's read-only profile dropdown with name, email, phone, role, and Log out, available across authenticated screens and roles; it replaces the former inline Logout link while keeping the inline name. The Log out action has a dark-teal fill and white text. Student-reported verification: the profile menu works as expected across roles, and the supporting Post Open Positions workflow is complete and verified.
+The student also requested the wireframe's read-only profile dropdown with name, email, phone, role, and Log out, available across authenticated screens and roles; it replaces the former inline Logout link while keeping the inline name. The Log out action has a dark-teal fill and white text. Student-reported verification: the profile menu works as expected across roles, and the disabled Post Position link was verified during Close Internship Cycle testing.
 
 ### Close Internship Cycle (supporting workflow; complete and verified)
 
@@ -539,24 +535,7 @@ https://
 
 ## Logins
 
-The following synthetic sample accounts were seeded into the local development database for matching verification. They all use the same sample password entered during the local seed. For safety, the plaintext password is not recorded in this report; obtain it from the authorized setup notes. These accounts may not exist in a separately deployed database.
-
-| Username | Role |
-|---|---|
-| `coordinator.demo` | Coordinator |
-| `rep.bluepeak` | Company Rep — BluePeak Technology |
-| `rep.islandgrid` | Company Rep — Island Grid Engineering |
-| `rep.seabright` | Company Rep — Seabright Legal Group |
-| `rep.peoplefirst` | Company Rep — PeopleFirst HR Services |
-| `rep.coralledger` | Company Rep — Coral Ledger & Co. |
-| `student.jane` | Student |
-| `student.jordan` | Student |
-| `student.amara` | Student |
-| `student.malik` | Student |
-| `student.casey` | Student |
-| `student.renee` | Student |
-
-To test the Internship Application workflow, markers should register a **new student account** rather than use one of the seeded student accounts, which already have submitted applications. Use a new username, email, and UWI student ID.
+No sample accounts or preloaded sample records are provided. To test the Internship Application workflow, register a student account.
 
 ## YouTube URL
 

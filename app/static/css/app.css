@@ -158,6 +158,16 @@ small {
   flex-wrap: wrap;
 }
 
+.landing-main {
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(26rem, 1.08fr);
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 4rem);
+  width: min(100%, 90rem);
+  margin: 0 auto;
+  padding: clamp(2rem, 5vh, 4rem) clamp(1.25rem, 4vw, 3.5rem);
+}
+
 .btn-landing {
   display: inline-flex;
   align-items: center;
@@ -187,6 +197,18 @@ small {
   border-color: var(--brand-primary-deep);
 }
 
+.btn-landing-sign-in {
+  min-height: 3.2rem;
+  padding: 0.85rem 1.55rem;
+  font-size: 1.05rem;
+}
+
+.btn-landing-register {
+  min-height: 3.35rem;
+  padding: 0.9rem 1.6rem;
+  font-size: 1.05rem;
+}
+
 .btn-landing-ghost {
   color: var(--brand-link);
   border-color: var(--brand-border);
@@ -202,9 +224,8 @@ small {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  width: min(100%, 74rem);
-  margin: 0 auto;
-  padding: clamp(3.5rem, 10vh, 7rem) clamp(1.25rem, 6vw, 5rem);
+  min-width: 0;
+  padding: clamp(1rem, 4vh, 3rem) 0;
 }
 
 .landing-kicker {
@@ -239,6 +260,102 @@ small {
   border-top: 1px solid var(--brand-border);
   color: var(--brand-muted);
   font-size: 0.9rem;
+}
+
+.landing-illustration {
+  width: min(96%, 49rem);
+  margin: 0 auto;
+}
+
+.landing-illustration svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  font-family: var(--brand-font-body);
+}
+
+.landing-illustration-label {
+  fill: var(--brand-muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.landing-illustration-name {
+  fill: var(--brand-primary);
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.landing-illustration-detail {
+  fill: var(--brand-muted);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.landing-offer-label {
+  fill: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.landing-student-card {
+  opacity: 0;
+  animation: landing-card-fade 0.45s ease-out 0.12s forwards;
+}
+
+.landing-company-card {
+  opacity: 0;
+  animation: landing-card-fade 0.45s ease-out 0.25s forwards;
+}
+
+.landing-arch,
+.landing-deck {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+}
+
+.landing-arch {
+  animation: landing-line-draw 0.9s ease-out 0.7s forwards;
+}
+
+.landing-deck {
+  animation: landing-line-draw 0.35s ease-out 1.6s forwards;
+}
+
+.landing-match-label,
+.landing-match-check,
+.landing-offer {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.landing-match-label {
+  animation: landing-badge-pop 0.32s ease-out 2.97s forwards;
+}
+
+.landing-match-check {
+  animation: landing-badge-pop 0.32s ease-out 2.97s forwards;
+}
+
+.landing-offer {
+  animation: landing-badge-pop 0.38s ease-out 3.6s forwards;
+}
+
+@keyframes landing-card-fade {
+  from { opacity: 0; transform: translateY(7px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes landing-line-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes landing-badge-pop {
+  from { opacity: 0; transform: scale(0.86); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 /* Sign in and registration */
@@ -652,11 +769,52 @@ small {
   }
 }
 
+@media (max-width: 900px) {
+  .landing-main {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.5rem;
+  }
+
+  .landing-hero {
+    padding: 2.5rem 0 1rem;
+  }
+
+  .landing-illustration {
+    width: min(96%, 36rem);
+  }
+}
+
+@media (min-width: 901px) {
+  .landing-illustration {
+    transform: translateX(clamp(0px, 1.25vw, 0.9rem));
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .landing-student-card,
+  .landing-company-card,
+  .landing-match-label,
+  .landing-match-check,
+  .landing-offer {
+    opacity: 1;
+    animation: none;
+    transform: none;
+  }
+
+  .landing-arch,
+  .landing-deck {
+    stroke-dashoffset: 0;
+    animation: none;
+  }
+
+  .landing-match-dot {
+    display: none;
   }
 }
