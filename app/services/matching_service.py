@@ -68,6 +68,7 @@ class CoordinatorApplicationRow:
 class CoordinatorDashboardState:
     cycle: InternshipCycle | None
     cycle_is_open: bool
+    applications_to_mark_not_matched: int
     applications: list[CoordinatorApplicationRow]
     status_filter: str
     filters: tuple[tuple[str, str], ...]
@@ -96,6 +97,12 @@ class MatchingService:
         ("awaiting_rematch", "Awaiting rematch"),
         ("submitted", "Submitted"),
     )
+    CLOSED_CYCLE_FILTERS = (
+        ("all", "All"),
+        ("matched", "Matched"),
+        ("placed", "Placed"),
+        ("not_matched", "Not Matched"),
+    )
 
     def __init__(self, matching_repository: MatchingRepository):
         self.matching_repository = matching_repository
@@ -106,19 +113,29 @@ class MatchingService:
         status_filter: str = "all",
     ) -> CoordinatorDashboardState:
         self._require_coordinator(user)
+        cycle = self.matching_repository.get_current_cycle()
+        cycle_is_open = cycle is not None and cycle.status.casefold() == "open"
+        filters = self.FILTERS if cycle_is_open else self.CLOSED_CYCLE_FILTERS
         normalized_filter = status_filter.strip().casefold().replace("_", " ")
-        valid_filters = {value.replace("_", " ") for value, _ in self.FILTERS}
+        valid_filters = {value.replace("_", " ") for value, _ in filters}
         if normalized_filter not in valid_filters:
             raise InvalidApplicationFilterError
 
-        cycle = self.matching_repository.get_current_cycle()
         application_rows: list[CoordinatorApplicationRow] = []
+        applications_to_mark_not_matched = 0
         if cycle is not None and cycle.cycleID is not None:
             active_match_counts = self.matching_repository.get_active_match_counts(
                 cycle.cycleID
             )
             records = self.matching_repository.get_applications_for_cycle(
                 cycle.cycleID
+            )
+            applications_to_mark_not_matched = sum(
+                1
+                for application, _, _ in records
+                if application.status.strip().casefold().replace("_", " ")
+                in {"submitted", "awaiting rematch"}
+                and active_match_counts.get(application.applicationID, 0) == 0
             )
             for application, student, student_user in records:
                 if (
@@ -141,10 +158,11 @@ class MatchingService:
 
         return CoordinatorDashboardState(
             cycle=cycle,
-            cycle_is_open=cycle is not None and cycle.status.casefold() == "open",
+            cycle_is_open=cycle_is_open,
+            applications_to_mark_not_matched=applications_to_mark_not_matched,
             applications=application_rows,
             status_filter=normalized_filter.replace(" ", "_"),
-            filters=self.FILTERS,
+            filters=filters,
         )
 
     def get_matching_page_state(

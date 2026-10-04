@@ -10,8 +10,7 @@
         Cycle Status: {{ ("Open" if state.cycle_is_open else "Closed")|status_label }}
       </span>
       {% if state.cycle_is_open %}
-      <button class="btn btn-outline-secondary" type="button" disabled
-              title="Cycle management is handled in the Close Internship Cycle workflow.">
+      <button class="btn btn-cycle-close" type="button" data-bs-toggle="modal" data-bs-target="#closeCycleModal">
         Close cycle
       </button>
       {% endif %}
@@ -67,4 +66,28 @@
     {% endif %}
   </section>
 </main>
+
+{% if state.cycle_is_open %}
+<div class="modal fade" id="closeCycleModal" tabindex="-1" aria-labelledby="closeCycleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title fs-5" id="closeCycleModalLabel">Close this cycle?</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cancel"></button>
+      </div>
+      <div class="modal-body">
+        <p>{{ state.applications_to_mark_not_matched }} applications will be marked Not Matched.</p>
+        <p>No new matches or positions can be created after this.</p>
+        <p class="mb-0">Existing matches will continue to be resolved. This action can't be undone.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+        <form method="post" action="{{ url_for('close_internship_cycle') }}">
+          <button type="submit" class="btn btn-primary">Confirm</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
 {% endblock %}

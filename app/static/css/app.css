@@ -401,6 +401,20 @@ small {
   border-color: var(--brand-primary-deep);
 }
 
+.btn-cycle-close {
+  color: #773b40;
+  background: #f8dfe0;
+  border-color: #eec2c5;
+  font-weight: 700;
+}
+
+.btn-cycle-close:hover,
+.btn-cycle-close:focus-visible {
+  color: #642f34;
+  background: #f2ced0;
+  border-color: #e3aeb2;
+}
+
 #content {
   display: flex;
   flex: 1 1 auto;

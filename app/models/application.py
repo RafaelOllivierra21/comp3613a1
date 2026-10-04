@@ -9,7 +9,9 @@ class InternshipCycle(SQLModel, table=True):
     cycleID: Optional[int] = Field(default=None, primary_key=True)
     startDate: date
     endDate: date
-    status: str
+    # STUDENT SNIPPET START: initial internship cycle lifecycle state.
+    status: str = "open"
+    # STUDENT SNIPPET END
 
 
 class Student(SQLModel, table=True):

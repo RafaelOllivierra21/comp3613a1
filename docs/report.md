@@ -299,6 +299,58 @@ Student-reported verification: the posting company and cycle details are correct
 
 The closed-cycle disabled-link behavior cannot yet be verified because the Close Internship Cycle workflow is not implemented; defer that check until that workflow is available. The student also requested the wireframe's read-only profile dropdown with name, email, phone, role, and Log out, available across authenticated screens and roles; it replaces the former inline Logout link while keeping the inline name. The Log out action has a dark-teal fill and white text. Student-reported verification: the profile menu works as expected across roles, and the supporting Post Open Positions workflow is complete and verified.
 
+### Close Internship Cycle (supporting workflow; complete and verified)
+
+The coordinator confirms closure in an irreversible confirmation modal. On closure, open positions in the cycle become `closed`; positions already `filled` stay filled. Existing matches remain actionable and may still resolve; a closed position may become filled when an existing match is accepted. No new positions or matches may be created after the cycle is closed.
+
+The confirmation counts only applications whose status is `submitted` or `awaiting rematch` and which have no active matches. Those applications become `not matched` on confirmation. Placed applications are unchanged and excluded. Applications with status `matched` and at least one active match remain `matched` and excluded; if their final active match ends after cycle closure, the existing cycle-aware transition changes the application to `not matched`.
+
+Student-reported verification: Cancel leaves the cycle open; the modal count is correct; open positions close while filled positions remain filled; application statuses update as specified; Post Position is disabled with an explanation; existing offers can still be accepted after closure and the closed position becomes filled; a post-closure rejection changes a student with no remaining active matches to not matched; and new students see applications closed. The Close cycle trigger uses a filled soft-red style per student feedback.
+
+Implementation: the coordinator dashboard previews the eligible application count and submits a thin route after the irreversible confirmation. `InternshipCycle.status` defaults to `open`. `CycleClosureService` coordinates the transition; `CycleClosureRepository` queries and persists the cycle, its open positions, and eligible applications atomically. The legacy admin-only branch in `admin_home_view` was removed at the student's request.
+
+Polish: after closure, the coordinator dashboard shows only All, Matched, Placed, and Not Matched filters, as in the wireframe. `MatchingService` selects this closed-cycle filter set and rejects filter values outside it. The student verified the filters and results; this supporting workflow is complete and verified.
+
+<!-- student-build:code-check
+workflow: Close Internship Cycle
+form: choice
+layer: other
+architecture_ok: yes
+implement_confidence: 0.84
+passed: yes
+note: Chose to close open positions while preserving filled positions and allowing existing matches to continue to resolution.
+-->
+
+<!-- student-build:code-check
+workflow: Close Internship Cycle
+form: choice
+layer: other
+architecture_ok: yes
+implement_confidence: 0.86
+passed: yes
+note: Defined the closure count and application transitions for submitted, awaiting-rematch, matched-with-active-matches, and placed applications.
+-->
+
+<!-- student-build:code-check
+workflow: Close Internship Cycle
+form: snippet
+layer: model
+architecture_ok: yes
+implement_confidence: 0.84
+passed: yes
+note: Set InternshipCycle.status to default to open for new cycle instances.
+-->
+
+<!-- student-build:code-check
+workflow: Close Internship Cycle
+form: snippet
+layer: router
+architecture_ok: yes
+implement_confidence: 0.86
+passed: yes
+note: Thin coordinator route delegates closure to CycleClosureService, handles domain errors with feedback and redirects, and contains no database operations.
+-->
+
 <!-- student-build:code-check
 workflow: Post Open Positions
 form: snippet
