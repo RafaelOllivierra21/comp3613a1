@@ -531,7 +531,12 @@ note: Thin POST handler calls MatchingService, maps domain errors to feedback, a
 
 Phase 6. Public Render URL (not localhost). Markers open this to mark the three workflows.
 
-https://
+https://internbridge-jnq3.onrender.com
+
+### Marker testing notes
+
+- Register a new student account to test Workflow 1: Internship Application.
+- Test the other workflows before testing Close Internship Cycle.
 
 ## Logins
 
