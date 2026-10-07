@@ -56,12 +56,6 @@ class MatchingRepository:
             self.db.rollback()
             raise
 
-    def get_student_skill_ids(self, student_id: int) -> set[int]:
-        statement = select(StudentSkill.skillID).where(
-            StudentSkill.studentID == student_id
-        )
-        return set(self.db.exec(statement).all())
-
     def get_student_skills(self, student_id: int) -> list[Skill]:
         statement = (
             select(Skill)
@@ -85,19 +79,21 @@ class MatchingRepository:
         )
         return self.db.exec(statement).all()
 
-    def get_required_skill_ids(
+    def get_required_skills(
         self,
         position_ids: list[int],
-    ) -> dict[int, set[int]]:
+    ) -> dict[int, list[Skill]]:
         if not position_ids:
             return {}
-        statement = select(
-            PositionSkill.positionID,
-            PositionSkill.skillID,
-        ).where(PositionSkill.positionID.in_(position_ids))
-        required_skills: dict[int, set[int]] = {}
-        for position_id, skill_id in self.db.exec(statement).all():
-            required_skills.setdefault(position_id, set()).add(skill_id)
+        statement = (
+            select(PositionSkill.positionID, Skill)
+            .join(Skill, Skill.skillID == PositionSkill.skillID)
+            .where(PositionSkill.positionID.in_(position_ids))
+            .order_by(Skill.name)
+        )
+        required_skills: dict[int, list[Skill]] = {}
+        for position_id, skill in self.db.exec(statement).all():
+            required_skills.setdefault(position_id, []).append(skill)
         return required_skills
 
     def get_current_matches(

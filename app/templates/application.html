@@ -8,7 +8,7 @@
   <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mt-3 mb-4">
     <h1 class="h3 mb-0">Your Application</h1>
     <div class="text-end">
-      <span class="badge rounded-pill {{ state.application.status|status_badge_class }}">{{ state.application.status|status_label }}</span>
+      <span class="badge rounded-pill application-status-badge {{ state.application.status|status_badge_class }}">{{ state.application.status|status_label }}</span>
       <p class="small mb-0 mt-1">Submitted: {{ state.application.dateSubmitted.strftime("%d/%m/%Y") }}</p>
     </div>
   </div>

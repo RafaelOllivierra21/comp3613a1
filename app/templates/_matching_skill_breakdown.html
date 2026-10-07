@@ -1,0 +1,22 @@
+<div class="matching-skill-groups">
+  <div>
+    <p class="matching-skill-label mb-1">Matched skills</p>
+    <div class="d-flex flex-wrap gap-1">
+      {% for skill in option.matched_skills %}
+      <span class="badge rounded-pill matching-skill-match">{{ skill.name }}</span>
+      {% else %}
+      <span class="small">None</span>
+      {% endfor %}
+    </div>
+  </div>
+  <div>
+    <p class="matching-skill-label mb-1">Missing skills</p>
+    <div class="d-flex flex-wrap gap-1">
+      {% for skill in option.missing_skills %}
+      <span class="badge rounded-pill matching-skill-missing">{{ skill.name }}</span>
+      {% else %}
+      <span class="small">None</span>
+      {% endfor %}
+    </div>
+  </div>
+</div>

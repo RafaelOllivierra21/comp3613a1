@@ -17,11 +17,23 @@
     </div>
   </div>
 
+  <form method="get" action="{{ url_for('admin_home_view') }}" class="d-flex flex-wrap align-items-end gap-2 mb-3" role="search">
+    <input type="hidden" name="status" value="{{ state.status_filter }}">
+    <div class="flex-grow-1">
+      <label class="form-label" for="applicationSearch">Search by student name or UWI ID</label>
+      <input class="form-control" id="applicationSearch" name="q" type="search" value="{{ state.search_query }}" placeholder="Name or UWI ID">
+    </div>
+    <button class="btn btn-primary" type="submit">Search</button>
+    {% if state.search_query %}
+    <a class="btn btn-outline-secondary" href="{{ url_for('admin_home_view') }}?status={{ state.status_filter }}">Clear</a>
+    {% endif %}
+  </form>
+
   <nav class="nav nav-pills gap-2 mb-3" aria-label="Filter applications">
     {% for filter_key, filter_label in state.filters %}
     <a class="nav-link {{ 'active' if state.status_filter == filter_key else '' }}"
-       href="{{ url_for('admin_home_view') }}?status={{ filter_key }}">
-      {{ filter_label }}
+       href="{{ url_for('admin_home_view') }}?status={{ filter_key }}&amp;q={{ state.search_query|urlencode }}">
+      {{ filter_label }} ({{ state.filter_counts[filter_key] }})
     </a>
     {% endfor %}
   </nav>
@@ -61,7 +73,9 @@
     </div>
     {% else %}
     <div class="application-empty-state text-center p-4">
-      <p class="mb-0 fw-semibold">No applications found for this cycle and filter.</p>
+      <p class="mb-0 fw-semibold">
+        {{ "No applications match “" ~ state.search_query ~ "” in this cycle and filter." if state.search_query else "No applications found for this cycle and filter." }}
+      </p>
     </div>
     {% endif %}
   </section>

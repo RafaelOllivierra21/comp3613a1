@@ -47,6 +47,8 @@ class PositionOption:
     position: Position
     company: Company
     fit_percentage: float
+    matched_skills: list[Skill]
+    missing_skills: list[Skill]
 
 
 @dataclass(frozen=True)
@@ -71,6 +73,8 @@ class CoordinatorDashboardState:
     applications_to_mark_not_matched: int
     applications: list[CoordinatorApplicationRow]
     status_filter: str
+    search_query: str
+    filter_counts: dict[str, int]
     filters: tuple[tuple[str, str], ...]
 
 
@@ -111,6 +115,7 @@ class MatchingService:
         self,
         user: User,
         status_filter: str = "all",
+        search_query: str = "",
     ) -> CoordinatorDashboardState:
         self._require_coordinator(user)
         cycle = self.matching_repository.get_current_cycle()
@@ -120,9 +125,12 @@ class MatchingService:
         valid_filters = {value.replace("_", " ") for value, _ in filters}
         if normalized_filter not in valid_filters:
             raise InvalidApplicationFilterError
+        normalized_search = search_query.strip().casefold()
 
         application_rows: list[CoordinatorApplicationRow] = []
         applications_to_mark_not_matched = 0
+        records: list[tuple[Application, Student, User]] = []
+        application_status_counts: dict[str, int] = {}
         if cycle is not None and cycle.cycleID is not None:
             active_match_counts = self.matching_repository.get_active_match_counts(
                 cycle.cycleID
@@ -138,10 +146,24 @@ class MatchingService:
                 and active_match_counts.get(application.applicationID, 0) == 0
             )
             for application, student, student_user in records:
+                normalized_status = (
+                    application.status.strip().casefold().replace("_", " ")
+                )
+                application_status_counts[normalized_status] = (
+                    application_status_counts.get(normalized_status, 0) + 1
+                )
                 if (
                     normalized_filter != "all"
-                    and application.status.strip().casefold().replace("_", " ")
-                    != normalized_filter
+                    and normalized_status != normalized_filter
+                ):
+                    continue
+                student_name = (
+                    student_user.fullName or student_user.username
+                ).casefold()
+                student_id = str(student.studentID)
+                if normalized_search and (
+                    normalized_search not in student_name
+                    and normalized_search not in student_id
                 ):
                     continue
                 application_rows.append(
@@ -156,12 +178,25 @@ class MatchingService:
                     )
                 )
 
+        filter_counts = {
+            filter_key: (
+                len(records)
+                if filter_key == "all"
+                else application_status_counts.get(
+                    filter_key.replace("_", " "),
+                    0,
+                )
+            )
+            for filter_key, _ in filters
+        }
         return CoordinatorDashboardState(
             cycle=cycle,
             cycle_is_open=cycle_is_open,
             applications_to_mark_not_matched=applications_to_mark_not_matched,
             applications=application_rows,
             status_filter=normalized_filter.replace(" ", "_"),
+            search_query=search_query.strip(),
+            filter_counts=filter_counts,
             filters=filters,
         )
 
@@ -208,17 +243,33 @@ class MatchingService:
             for position, _ in eligible_records
             if position.positionID is not None
         ]
-        required_skill_ids = self.matching_repository.get_required_skill_ids(
-            position_ids
-        )
-        student_skill_ids = self.matching_repository.get_student_skill_ids(
+        required_skills = self.matching_repository.get_required_skills(position_ids)
+        student_skills = self.matching_repository.get_student_skills(
             student.studentID
         )
+        student_skill_ids = {
+            skill.skillID for skill in student_skills if skill.skillID is not None
+        }
 
         open_positions = []
         for position, company in eligible_records:
             position_id = position.positionID
-            required_ids = required_skill_ids.get(position_id, set())
+            position_skills = required_skills.get(position_id, [])
+            required_ids = {
+                skill.skillID
+                for skill in position_skills
+                if skill.skillID is not None
+            }
+            matched_skills = [
+                skill
+                for skill in position_skills
+                if skill.skillID in student_skill_ids
+            ]
+            missing_skills = [
+                skill
+                for skill in position_skills
+                if skill.skillID not in student_skill_ids
+            ]
             fit_percentage = (
                 len(student_skill_ids.intersection(required_ids))
                 / len(required_ids)
@@ -231,6 +282,8 @@ class MatchingService:
                     position=position,
                     company=company,
                     fit_percentage=fit_percentage,
+                    matched_skills=matched_skills,
+                    missing_skills=missing_skills,
                 )
             )
         open_positions.sort(
@@ -268,9 +321,7 @@ class MatchingService:
             application=application,
             student=student,
             student_user=student_user,
-            student_skills=self.matching_repository.get_student_skills(
-                student.studentID
-            ),
+            student_skills=student_skills,
             cycle=cycle,
             cycle_is_open=cycle_is_open,
             has_open_positions=bool(open_position_records),

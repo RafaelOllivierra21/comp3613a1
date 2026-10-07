@@ -529,9 +529,25 @@ note: Thin POST handler calls MatchingService, maps domain errors to feedback, a
 
 ## Deployed app
 
-Phase 6. Public Render URL (not localhost). Markers open this to mark the three workflows.
+Phase 6 is complete. The app was deployed from `render.yaml` as a Render Blueprint. The student confirmed the start command ran correctly and seeded all marker data.
 
-https://internbridge-jnq3.onrender.com
+Public URL: https://internbridge-jnq3.onrender.com
+
+### Post-deployment Phase 5 polish
+
+The Company Rep Positions dashboard now displays candidate totals without zero-padding and uses singular wording for one candidate (for example, “0 candidates” and “1 candidate”). The student verified both display cases. The count is derived from the existing candidate records; no database or model changes were made.
+
+The existing-application status badge on the Apply page has increased text size, padding, and minimum height while preserving its status color and label. The student verified the visual refinement. This is CSS-only; no database or model changes were made.
+
+The coordinator's suggested-position cards now show the student's matched skills and the position's missing required skills, derived from existing records. The student verified the lists, including clear spacing between the two skill groups and between the breakdown and Match button. The same breakdown appears in Show all open positions, and each Current Matches entry shows its existing match date. No database schema or data changes were made.
+
+The coordinator Applications dashboard now supports case-insensitive search by student name or partial/exact UWI ID, while preserving the selected status filter. The student verified the search and clear behavior. Filtering uses the applications already loaded for the cycle; no database schema or data changes were made.
+
+Coordinator status-filter links use dark-teal text, a translucent mint hover fill, and retain the active filter's solid mint fill. The student verified the colors. This is CSS-only; no database or model changes were made.
+
+Each coordinator status-filter tab now shows a count from the full cycle, independent of the active search, including the closed-cycle filters. The student verified the counts in both cycle states; no database schema or data changes were made.
+
+Suggested-position fit badges now include the “% fit” label, matching the expanded open-positions list. The student verified the final refinement; no database schema or data changes were made.
 
 ### Marker testing notes
 

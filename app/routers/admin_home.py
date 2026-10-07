@@ -22,10 +22,15 @@ def admin_home_view(
     user: AuthDep,
     db: SessionDep,
     status_filter: str = Query(default="all", alias="status"),
+    search_query: str = Query(default="", alias="q"),
 ):
     service = MatchingService(MatchingRepository(db))
     try:
-        state = service.get_coordinator_dashboard_state(user, status_filter)
+        state = service.get_coordinator_dashboard_state(
+            user,
+            status_filter,
+            search_query,
+        )
     except NotCoordinatorError:
         flash(request, "This dashboard is available to coordinator accounts only.", "danger")
         return RedirectResponse(

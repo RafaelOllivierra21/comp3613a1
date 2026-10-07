@@ -29,10 +29,11 @@
           <div class="col-md-4">
             <article class="card h-100 p-3">
               <span class="badge rounded-pill match-fit-badge align-self-start mb-2">
-                {{ option.fit_percentage|round|int }}%
+                {{ option.fit_percentage|round|int }}% fit
               </span>
               <h3 class="h6 mb-1">{{ option.position.title }}</h3>
               <p class="small mb-3">{{ option.company.name }}</p>
+              {% include "_matching_skill_breakdown.html" %}
               {% if state.can_match %}
               <form method="post" action="{{ url_for('create_position_match', application_id=state.application.applicationID, position_id=option.position.positionID) }}" class="mt-auto">
                 <button class="btn btn-primary w-100" type="submit">Match</button>
@@ -53,13 +54,16 @@
           {% if state.open_positions %}
           <div class="list-group list-group-flush mt-3">
             {% for option in state.open_positions %}
-            <div class="list-group-item d-flex align-items-center justify-content-between gap-3 px-0">
-              <div>
-                <strong>{{ option.position.title }}</strong>
-                <span class="small d-block">{{ option.company.name }}</span>
-              </div>
-              <div class="d-flex align-items-center gap-3">
-                <span class="small">{{ option.fit_percentage|round|int }}%</span>
+            <div class="list-group-item px-0">
+              <div class="d-flex align-items-start justify-content-between gap-3">
+                <div class="flex-grow-1">
+                  <strong>{{ option.position.title }}</strong>
+                  <span class="small d-block">{{ option.company.name }}</span>
+                  <span class="badge rounded-pill match-fit-badge mt-2">{{ option.fit_percentage|round|int }}% fit</span>
+                  <div class="mt-2">
+                    {% include "_matching_skill_breakdown.html" %}
+                  </div>
+                </div>
                 {% if state.can_match %}
                 <form method="post" action="{{ url_for('create_position_match', application_id=state.application.applicationID, position_id=option.position.positionID) }}">
                   <button class="btn btn-sm btn-primary" type="submit">Match</button>
@@ -107,6 +111,7 @@
               <div>
                 <strong class="d-block">{{ current.position.title }}</strong>
                 <span class="small">{{ current.company.name }}</span>
+                <span class="small d-block mt-1">Matched: {{ current.match.matchDate.strftime("%d/%m/%Y") }}</span>
               </div>
               <span class="badge rounded-pill align-self-start {{ current.match.status|status_badge_class }}">
                 {{ current.match.status|status_label }}

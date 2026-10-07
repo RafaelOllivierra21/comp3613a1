@@ -19,7 +19,7 @@
           <p class="small mb-2">{{ position_card.position.description }}</p>
           <p class="small mb-0">
             Opened: {{ position_card.position.dateOpened.strftime("%d/%m/%Y") }}
-            <span class="ms-2">{{ "%02d"|format(position_card.candidates|length) }} candidates</span>
+            <span class="ms-2">{{ position_card.candidates|length }} candidate{% if position_card.candidates|length != 1 %}s{% endif %}</span>
           </p>
         </div>
         <div class="col-lg-8">
