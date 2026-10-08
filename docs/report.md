@@ -143,7 +143,7 @@ Phase 5 model revisions requested by the student:
 - `Student.studentID` is entered as the student's UWI ID and is the primary key; it is not auto-generated. Reject duplicate UWI IDs with a friendly message.
 - Add a unique constraint on `Application(studentID, cycleID)` to enforce one application per student per cycle.
 - Add a unique constraint on `Match(applicationID, positionID)` to prevent duplicate matches for the same application and position.
-- Do not suggest or match a position again for a student after that student's previous match for the position was declined or rejected. Because this history can span applications, matching services must check prior match outcomes in addition to the per-application database uniqueness constraint.
+- Do not suggest or match a position again for a student after that student's previous match for the position was declined or rejected.
 
 Internship Application decisions: students without an application see the empty dashboard and can apply. The student profile is created when the application is submitted; account details entered at registration supply the read-only profile details shown on the form. The student enters their UWI ID, which becomes `Student.studentID`. Once an application exists, hide the dashboard Apply action and show a route to the read-only application view. Check for an existing application before submission and enforce the student/cycle unique constraint in the database as a final guard; if a duplicate reaches that guard, redirect to the read-only application with a friendly “You have already applied for this cycle” message. A duplicate UWI ID is also rejected with a friendly message. The workflow uses the single internship cycle shown in the wireframe.
 
@@ -527,12 +527,6 @@ passed: yes
 note: Thin POST handler calls MatchingService, maps domain errors to feedback, and redirects successful matches to matching_view.
 -->
 
-## Deployed app
-
-Phase 6 is complete. The app was deployed from `render.yaml` as a Render Blueprint. The student confirmed the start command ran correctly and seeded all marker data.
-
-Public URL: https://internbridge-jnq3.onrender.com
-
 ### Post-deployment Phase 5 polish
 
 The Company Rep Positions dashboard now displays candidate totals without zero-padding and uses singular wording for one candidate (for example, “0 candidates” and “1 candidate”). The student verified both display cases. The count is derived from the existing candidate records; no database or model changes were made.
@@ -549,10 +543,28 @@ Each coordinator status-filter tab now shows a count from the full cycle, indepe
 
 Suggested-position fit badges now include the “% fit” label, matching the expanded open-positions list. The student verified the final refinement; no database schema or data changes were made.
 
+## Deployed app
+
+Phase 6 is complete. The app was deployed from `render.yaml` as a Render Blueprint. The student confirmed the start command ran correctly and seeded all marker data.
+
+Public URL: https://internbridge-jnq3.onrender.com
+Health check verified: https://internbridge-jnq3.onrender.com/health
+
+### What's seeded
+
+The `python manage.py init --no-drop` setup creates the database tables, one internship cycle (October 5, 2026–May 5, 2027), and a catalog of 30 skills. The Render start command then runs `python manage.py seed-sample`, which loads `docs/sample-data.json` on every start. The reviewed fixture includes 12 synthetic accounts (one coordinator, five company reps, and six students), five Trinidad-based companies, 10 open positions with required skills, and six student profiles with applications and selected skills. It contains no Match records, so the coordinator can create matches during testing.
+
+The agent generated the sample data from my requirements. I reviewed it and requested fixes, including Trinidad locations, October 5 cycle/opening/application dates, an accounting student, UWI IDs starting with 8160, and phone numbers using the 868 area code.
+
+### Render deployment
+
+Render MCP tools would not load in Copilot despite troubleshooting, so I deployed through the Render dashboard using `render.yaml` as the Blueprint and changed the service name to `internbridge`. I found and tested a bug where restarting after the internship cycle was closed could prevent the app from starting. The start command uses semicolon-separated commands and runs `seed-sample` before starting the web service, so a seed-command failure does not stop the app from launching. The sample password is set to a fixed value in `render.yaml`, keeping the marker logins available across starts.
+
 ### Marker testing notes
 
 - Register a new student account to test Workflow 1: Internship Application.
 - Test the other workflows before testing Close Internship Cycle.
+- If the internship cycle is closed, email rafael.ollivierra@my.uwi.edu to request a data reset.
 
 ## Logins
 
