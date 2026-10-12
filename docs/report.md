@@ -1,9 +1,5 @@
 # COMP 3613 Assignment 1
 
-Draft this file with the Guide. **Update it after every phase milestone** before you pause. The use-case diagram is a UML PNG at `docs/diagrams/use-case.png`, linked from this file as `diagrams/use-case.png` (path relative to `docs/report.md`). The model diagram is Mermaid. **Embed wireframe images** as `wireframes/<file>` (files live in `docs/wireframes/`).
-
-Do not put your student ID in this file if you will commit it. The PDF cover adds your name and ID at export time.
-
 ## Assigned project
 
 Internship Platform
@@ -131,8 +127,6 @@ erDiagram
     }
 ```
 
-Assumptions: the internship program runs only at the UWI St. Augustine campus and is open to students across all faculties; resumes are stored as a link rather than an uploaded file. Positions belong to the company and are tied to an internship cycle, so closing a cycle can close the related positions. The `Match` record remains separate from `Application` to track interviews, offers, and outcome states without losing the original application record.
-
 Phase 5 model revision: a company may temporarily have no company representative, but may have at most one. `CompanyRep.companyID` is unique, and the ERD now shows the optional one-to-one relationship.
 
 Phase 4 model review: the matching wireframe displays a fit percentage for suggested positions. This score will be calculated when suggestions are shown rather than stored on `Match`; no new model field is needed.
@@ -146,6 +140,15 @@ Phase 5 model revisions requested by the student:
 - Do not suggest or match a position again for a student after that student's previous match for the position was declined or rejected.
 
 Internship Application decisions: students without an application see the empty dashboard and can apply. The student profile is created when the application is submitted; account details entered at registration supply the read-only profile details shown on the form. The student enters their UWI ID, which becomes `Student.studentID`. Once an application exists, hide the dashboard Apply action and show a route to the read-only application view. Check for an existing application before submission and enforce the student/cycle unique constraint in the database as a final guard; if a duplicate reaches that guard, redirect to the read-only application with a friendly “You have already applied for this cycle” message. A duplicate UWI ID is also rejected with a friendly message. The workflow uses the single internship cycle shown in the wireframe.
+
+## Assumptions
+
+- The internship program runs only at the UWI St. Augustine campus and is open to students across all faculties.
+- Resumes are stored as links rather than uploaded files.
+- Positions belong to a company and are tied to an internship cycle; closing a cycle can close its related positions.
+- `Match` records remain separate from `Application` records to track interviews, offers, and outcomes without losing the original application.
+- A company may temporarily have no representative, but may have at most one representative.
+- The workflows use the single internship cycle shown in the wireframe.
 
 ## Wireframes
 
@@ -547,8 +550,15 @@ Suggested-position fit badges now include the “% fit” label, matching the ex
 
 Phase 6 is complete. The app was deployed from `render.yaml` as a Render Blueprint. The student confirmed the start command ran correctly and seeded all marker data.
 
-Public URL: https://internbridge-jnq3.onrender.com
+Public URL: https://internbridge-jnq3.onrender.com 
+
 Health check verified: https://internbridge-jnq3.onrender.com/health
+
+### Marker testing notes
+
+- Register a new student account to test Workflow 1: Internship Application.
+- Closing the internship cycle cannot be undone and blocks new applications and matches. Test Close Internship Cycle last.
+- If the internship cycle is closed, email rafael.ollivierra@my.uwi.edu to request a data reset.
 
 ### What's seeded
 
@@ -560,30 +570,24 @@ The agent generated the sample data from my requirements. I reviewed it and requ
 
 Render MCP tools would not load in Copilot despite troubleshooting, so I deployed through the Render dashboard using `render.yaml` as the Blueprint and changed the service name to `internbridge`. I found and tested a bug where restarting after the internship cycle was closed could prevent the app from starting. The start command uses semicolon-separated commands and runs `seed-sample` before starting the web service, so a seed-command failure does not stop the app from launching. The sample password is set to a fixed value in `render.yaml`, keeping the marker logins available across starts.
 
-### Marker testing notes
-
-- Register a new student account to test Workflow 1: Internship Application.
-- Test the other workflows before testing Close Internship Cycle.
-- If the internship cycle is closed, email rafael.ollivierra@my.uwi.edu to request a data reset.
-
 ## Logins
 
-The following synthetic marker accounts are loaded by `seed-sample` when the Render service starts. Shared password: `Internbridge2026`.
+The following synthetic marker accounts are loaded by `seed-sample` when the Render service starts. Shared password: `Internbridge2026`. The starter Bob and admin accounts were removed and are not available for marker testing.
 
-| Username | Role |
-|---|---|
-| `coordinator.demo` | Coordinator |
-| `rep.bluepeak` | Company Rep |
-| `rep.islandgrid` | Company Rep |
-| `rep.seabright` | Company Rep |
-| `rep.peoplefirst` | Company Rep |
-| `rep.coralledger` | Company Rep |
-| `student.jane` | Student |
-| `student.jordan` | Student |
-| `student.amara` | Student |
-| `student.malik` | Student |
-| `student.casey` | Student |
-| `student.renee` | Student |
+| Username | Role | Password |
+|---|---|---|
+| `coordinator.demo` | Coordinator | `Internbridge2026` |
+| `rep.bluepeak` | Company Rep | `Internbridge2026` |
+| `rep.islandgrid` | Company Rep | `Internbridge2026` |
+| `rep.seabright` | Company Rep | `Internbridge2026` |
+| `rep.peoplefirst` | Company Rep | `Internbridge2026` |
+| `rep.coralledger` | Company Rep | `Internbridge2026` |
+| `student.jane` | Student | `Internbridge2026` |
+| `student.jordan` | Student | `Internbridge2026` |
+| `student.amara` | Student | `Internbridge2026` |
+| `student.malik` | Student | `Internbridge2026` |
+| `student.casey` | Student | `Internbridge2026` |
+| `student.renee` | Student | `Internbridge2026` |
 
 ## YouTube URL
 
