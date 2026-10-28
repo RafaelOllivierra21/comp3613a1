@@ -3,9 +3,15 @@ from contextlib import asynccontextmanager
 
 import uvicorn
 from fastapi import FastAPI, Request, status
+from fastapi.exception_handlers import (
+    http_exception_handler,
+    request_validation_exception_handler,
+)
+from fastapi.exceptions import RequestValidationError
+from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.middleware import Middleware
 from starlette.middleware.sessions import SessionMiddleware
-from starlette.responses import RedirectResponse
+from starlette.responses import JSONResponse, RedirectResponse
 
 from app.config import get_settings
 from app.routers import api_router, router, static_files, templates
@@ -60,11 +66,44 @@ async def health():
 
 
 @app.exception_handler(status.HTTP_401_UNAUTHORIZED)
-async def unauthorized_redirect_handler(request: Request, exc: Exception):
+async def unauthorized_redirect_handler(
+    request: Request,
+    exc: StarletteHTTPException,
+):
+    if request.url.path.startswith("/api"):
+        return JSONResponse(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            content={"error": exc.detail},
+            headers=exc.headers,
+        )
     return templates.TemplateResponse(
         request=request,
         name="401.html",
     )
+
+
+@app.exception_handler(StarletteHTTPException)
+async def http_error_handler(request: Request, exc: StarletteHTTPException):
+    if request.url.path.startswith("/api"):
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={"error": exc.detail},
+            headers=exc.headers,
+        )
+    return await http_exception_handler(request, exc)
+
+
+@app.exception_handler(RequestValidationError)
+async def request_validation_error_handler(
+    request: Request,
+    exc: RequestValidationError,
+):
+    if request.url.path.startswith("/api"):
+        return JSONResponse(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            content={"error": "invalid request body"},
+        )
+    return await request_validation_exception_handler(request, exc)
 
 
 if __name__ == "__main__":
