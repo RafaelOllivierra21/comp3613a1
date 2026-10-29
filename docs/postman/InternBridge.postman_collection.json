@@ -1,0 +1,1771 @@
+{
+  "info": {
+    "_postman_id": "4e4a804b-e622-46cf-a819-1f24bf628551",
+    "name": "InternBridge",
+    "description": "API workflow tests for COMP 3613 Assignment 2. Run against a freshly initialized local database after `python manage.py init` and `python manage.py seed-sample`.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Signup new student",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/signup",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\":\"{{newUsername}}\",\"password\":\"Internbridge2026\",\"fullName\":\"API Test Student\",\"email\":\"{{newEmail}}\",\"number\":\"555-0101\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const suffix = Date.now().toString(36) + Math.random().toString(36).slice(2, 9);",
+                  "pm.collectionVariables.set(\"newUsername\", \"api_student_\" + suffix);",
+                  "pm.collectionVariables.set(\"newEmail\", \"api_student_\" + suffix + \"@example.com\");",
+                  "pm.collectionVariables.set(\"studentID\", String(Math.floor(100000000 + Math.random() * 700000000)));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"message\"],\"properties\":{\"message\":{\"type\":\"string\"}},\"additionalProperties\":false});",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Signup same student again",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/signup",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\":\"{{newUsername}}\",\"password\":\"Internbridge2026\",\"fullName\":\"API Test Student\",\"email\":\"{{newEmail}}\",\"number\":\"555-0101\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"string\"}},\"additionalProperties\":false});",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Signup without email",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/signup",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\":\"{{newUsername}}\",\"password\":\"Internbridge2026\",\"fullName\":\"API Test Student\",\"number\":\"555-0101\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 422\", function () { pm.response.to.have.status(422); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"string\"}},\"additionalProperties\":false});",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Auth with wrong password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/auth",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\":\"{{newUsername}}\",\"password\":\"incorrect-password\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"string\"}},\"additionalProperties\":false});",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Auth new student",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/auth",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\":\"{{newUsername}}\",\"password\":\"Internbridge2026\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"token\"],\"properties\":{\"token\":{\"type\":\"string\"}},\"additionalProperties\":false});",
+                  "  pm.collectionVariables.set(\"studentToken\", pm.response.json().token);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Auth coordinator.demo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/auth",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\":\"coordinator.demo\",\"password\":\"Internbridge2026\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"token\"],\"properties\":{\"token\":{\"type\":\"string\"}},\"additionalProperties\":false});",
+                  "  pm.collectionVariables.set(\"coordinatorToken\", pm.response.json().token);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Auth rep.bluepeak",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/auth",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\":\"rep.bluepeak\",\"password\":\"Internbridge2026\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"token\"],\"properties\":{\"token\":{\"type\":\"string\"}},\"additionalProperties\":false});",
+                  "  pm.collectionVariables.set(\"bluepeakToken\", pm.response.json().token);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Auth rep.islandgrid",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/auth",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\":\"rep.islandgrid\",\"password\":\"Internbridge2026\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"token\"],\"properties\":{\"token\":{\"type\":\"string\"}},\"additionalProperties\":false});",
+                  "  pm.collectionVariables.set(\"islandgridToken\", pm.response.json().token);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "List users without token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{host}}/api/users"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () { pm.response.to.have.status(401); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"string\"}},\"additionalProperties\":false});",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List users as student",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{studentToken}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/users"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"string\"}},\"additionalProperties\":false});",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List users as coordinator",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{coordinatorToken}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/users"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"array\",\"items\":{\"type\":\"object\",\"required\":[\"id\",\"username\",\"email\"],\"properties\":{\"id\":{\"type\":\"integer\"},\"username\":{\"type\":\"string\"},\"email\":{\"type\":\"string\"}},\"additionalProperties\":false}});",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Workflow 1",
+      "item": [
+        {
+          "name": "Get own application before applying",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{studentToken}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/applications/me"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"string\"}},\"additionalProperties\":false});",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Submit application without token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/applications",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"studentID\":{{studentID}},\"gpa\":3.7,\"degreeName\":\"Computer Science\",\"expectedGraduationDate\":\"2027-05-15\",\"resumeLink\":\"https://example.com/resume\",\"skillIDs\":[1,2]}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () { pm.response.to.have.status(401); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"string\"}},\"additionalProperties\":false});",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Submit application as coordinator",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{coordinatorToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/applications",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"studentID\":{{studentID}},\"gpa\":3.7,\"degreeName\":\"Computer Science\",\"expectedGraduationDate\":\"2027-05-15\",\"resumeLink\":\"https://example.com/resume\",\"skillIDs\":[1,2]}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"string\"}},\"additionalProperties\":false});",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Submit application with GPA 5.0",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{studentToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/applications",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"studentID\":{{studentID}},\"gpa\":5.0,\"degreeName\":\"Computer Science\",\"expectedGraduationDate\":\"2027-05-15\",\"resumeLink\":\"https://example.com/resume\",\"skillIDs\":[1,2]}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"string\"}},\"additionalProperties\":false});",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Submit valid application",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{studentToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/applications",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"studentID\":{{studentID}},\"gpa\":3.7,\"degreeName\":\"Computer Science\",\"expectedGraduationDate\":\"2027-05-15\",\"resumeLink\":\"https://example.com/resume\",\"skillIDs\":[1,2]}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"message\",\"applicationID\"],\"properties\":{\"message\":{\"type\":\"string\"},\"applicationID\":{\"type\":\"integer\"}},\"additionalProperties\":false});",
+                  "  pm.collectionVariables.set(\"applicationID\", pm.response.json().applicationID);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Submit application again",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{studentToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/applications",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"studentID\":{{studentID}},\"gpa\":3.7,\"degreeName\":\"Computer Science\",\"expectedGraduationDate\":\"2027-05-15\",\"resumeLink\":\"https://example.com/resume\",\"skillIDs\":[1,2]}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"string\"}},\"additionalProperties\":false});",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get own application",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{studentToken}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/applications/me"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"applicationID\",\"studentID\",\"status\",\"dateSubmitted\",\"student\",\"skills\",\"matches\"],\"properties\":{\"applicationID\":{\"type\":\"integer\"},\"studentID\":{\"type\":\"integer\"},\"status\":{\"type\":\"string\"},\"dateSubmitted\":{\"type\":\"string\"},\"student\":{\"type\":\"object\",\"required\":[\"fullName\",\"email\",\"number\",\"degreeName\",\"gpa\",\"expectedGraduationDate\",\"resumeLink\"],\"properties\":{\"fullName\":{\"type\":\"string\"},\"email\":{\"type\":\"string\"},\"number\":{\"type\":\"string\"},\"degreeName\":{\"type\":\"string\"},\"gpa\":{\"type\":\"number\"},\"expectedGraduationDate\":{\"type\":\"string\"},\"resumeLink\":{\"type\":\"string\"}},\"additionalProperties\":false},\"skills\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"required\":[\"skillID\",\"name\"],\"properties\":{\"skillID\":{\"type\":\"integer\"},\"name\":{\"type\":\"string\"}},\"additionalProperties\":false}},\"matches\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"required\":[\"matchID\",\"positionID\",\"title\",\"company\",\"status\",\"matchDate\"],\"properties\":{\"matchID\":{\"type\":\"integer\"},\"positionID\":{\"type\":\"integer\"},\"title\":{\"type\":\"string\"},\"company\":{\"type\":\"string\"},\"status\":{\"type\":\"string\"},\"matchDate\":{\"type\":\"string\"}},\"additionalProperties\":false}}},\"additionalProperties\":false});",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Post Position",
+      "item": [
+        {
+          "name": "Post position as rep.bluepeak",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{bluepeakToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/positions",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"title\":\"Postman API Test Position\",\"description\":\"Temporary position created by the Postman API collection.\",\"skillIDs\":[1,2]}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"message\",\"positionID\"],\"properties\":{\"message\":{\"type\":\"string\"},\"positionID\":{\"type\":\"integer\"}},\"additionalProperties\":false});",
+                  "  pm.collectionVariables.set(\"positionID\", pm.response.json().positionID);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Post position with blank title",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{bluepeakToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/positions",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"title\":\"   \",\"description\":\"Temporary position created by the Postman API collection.\",\"skillIDs\":[1,2]}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"string\"}},\"additionalProperties\":false});",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Post position as student",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{studentToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/positions",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"title\":\"Postman API Test Position\",\"description\":\"Temporary position created by the Postman API collection.\",\"skillIDs\":[1,2]}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"string\"}},\"additionalProperties\":false});",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Workflow 2",
+      "item": [
+        {
+          "name": "List applications",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{coordinatorToken}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/applications"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"array\",\"items\":{\"type\":\"object\",\"required\":[\"applicationID\",\"studentID\",\"fullName\",\"degreeName\",\"gpa\",\"status\",\"activeMatches\"],\"properties\":{\"applicationID\":{\"type\":\"integer\"},\"studentID\":{\"type\":\"integer\"},\"fullName\":{\"type\":\"string\"},\"degreeName\":{\"type\":\"string\"},\"gpa\":{\"type\":\"number\"},\"status\":{\"type\":\"string\"},\"activeMatches\":{\"type\":\"integer\"}},\"additionalProperties\":false}});",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List applications with invalid status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{coordinatorToken}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/applications?status=not%20matched"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"string\"}},\"additionalProperties\":false});",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List applications as student",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{studentToken}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/applications"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"string\"}},\"additionalProperties\":false});",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get position suggestions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{coordinatorToken}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/applications/{{applicationID}}/suggestions"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"array\",\"items\":{\"type\":\"object\",\"required\":[\"positionID\",\"title\",\"company\",\"fitPercent\",\"matchedSkills\",\"missingSkills\"],\"properties\":{\"positionID\":{\"type\":\"integer\"},\"title\":{\"type\":\"string\"},\"company\":{\"type\":\"string\"},\"fitPercent\":{\"type\":\"integer\"},\"matchedSkills\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"missingSkills\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}},\"additionalProperties\":false}});",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get all position suggestions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{coordinatorToken}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/applications/{{applicationID}}/suggestions?all=true"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"array\",\"items\":{\"type\":\"object\",\"required\":[\"positionID\",\"title\",\"company\",\"fitPercent\",\"matchedSkills\",\"missingSkills\"],\"properties\":{\"positionID\":{\"type\":\"integer\"},\"title\":{\"type\":\"string\"},\"company\":{\"type\":\"string\"},\"fitPercent\":{\"type\":\"integer\"},\"matchedSkills\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"missingSkills\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}},\"additionalProperties\":false}});",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get suggestions for unknown application",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{coordinatorToken}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/applications/999999/suggestions"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"string\"}},\"additionalProperties\":false});",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create match",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{coordinatorToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/matches",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"applicationID\":{{applicationID}},\"positionID\":{{positionID}}}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"message\",\"matchID\"],\"properties\":{\"message\":{\"type\":\"string\"},\"matchID\":{\"type\":\"integer\"}},\"additionalProperties\":false});",
+                  "  pm.collectionVariables.set(\"matchID\", pm.response.json().matchID);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create same match again",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{coordinatorToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/matches",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"applicationID\":{{applicationID}},\"positionID\":{{positionID}}}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"string\"}},\"additionalProperties\":false});",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create match with unknown position",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{coordinatorToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/matches",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"applicationID\":{{applicationID}},\"positionID\":999999}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"string\"}},\"additionalProperties\":false});",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Workflow 3",
+      "item": [
+        {
+          "name": "View own positions and candidates",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{bluepeakToken}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/positions/mine"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"array\",\"items\":{\"type\":\"object\",\"required\":[\"positionID\",\"title\",\"status\",\"dateOpened\",\"candidates\"],\"properties\":{\"positionID\":{\"type\":\"integer\"},\"title\":{\"type\":\"string\"},\"status\":{\"type\":\"string\"},\"dateOpened\":{\"type\":\"string\"},\"candidates\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"required\":[\"matchID\",\"fullName\",\"degreeName\",\"gpa\",\"email\",\"number\",\"resumeLink\",\"status\"],\"properties\":{\"matchID\":{\"type\":\"integer\"},\"fullName\":{\"type\":\"string\"},\"degreeName\":{\"type\":\"string\"},\"gpa\":{\"type\":\"number\"},\"email\":{\"type\":\"string\"},\"number\":{\"type\":\"string\"},\"resumeLink\":{\"type\":\"string\"},\"status\":{\"type\":\"string\"}},\"additionalProperties\":false}}},\"additionalProperties\":false}});",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Offer before interviewing",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{bluepeakToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/matches/{{matchID}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"status\":\"offered\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"string\"}},\"additionalProperties\":false});",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Company rep submits student status",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{bluepeakToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/matches/{{matchID}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"status\":\"accepted\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"string\"}},\"additionalProperties\":false});",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Set match to interviewing",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{bluepeakToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/matches/{{matchID}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"status\":\"interviewing\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"message\",\"status\"],\"properties\":{\"message\":{\"type\":\"string\"},\"status\":{\"type\":\"string\"}},\"additionalProperties\":false});",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Different company rep attempts offer",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{islandgridToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/matches/{{matchID}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"status\":\"offered\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"string\"}},\"additionalProperties\":false});",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Coordinator attempts match update",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{coordinatorToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/matches/{{matchID}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"status\":\"interviewing\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"string\"}},\"additionalProperties\":false});",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Set match to offered",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{bluepeakToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/matches/{{matchID}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"status\":\"offered\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"message\",\"status\"],\"properties\":{\"message\":{\"type\":\"string\"},\"status\":{\"type\":\"string\"}},\"additionalProperties\":false});",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Student accepts offer",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{studentToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/matches/{{matchID}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"status\":\"accepted\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"message\",\"status\"],\"properties\":{\"message\":{\"type\":\"string\"},\"status\":{\"type\":\"string\"}},\"additionalProperties\":false});",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Accept same offer again",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{studentToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/matches/{{matchID}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"status\":\"accepted\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"string\"}},\"additionalProperties\":false});",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Verify application is placed",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{studentToken}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/applications/me"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"applicationID\",\"studentID\",\"status\",\"dateSubmitted\",\"student\",\"skills\",\"matches\"],\"properties\":{\"applicationID\":{\"type\":\"integer\"},\"studentID\":{\"type\":\"integer\"},\"status\":{\"type\":\"string\"},\"dateSubmitted\":{\"type\":\"string\"},\"student\":{\"type\":\"object\",\"required\":[\"fullName\",\"email\",\"number\",\"degreeName\",\"gpa\",\"expectedGraduationDate\",\"resumeLink\"],\"properties\":{\"fullName\":{\"type\":\"string\"},\"email\":{\"type\":\"string\"},\"number\":{\"type\":\"string\"},\"degreeName\":{\"type\":\"string\"},\"gpa\":{\"type\":\"number\"},\"expectedGraduationDate\":{\"type\":\"string\"},\"resumeLink\":{\"type\":\"string\"}},\"additionalProperties\":false},\"skills\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"required\":[\"skillID\",\"name\"],\"properties\":{\"skillID\":{\"type\":\"integer\"},\"name\":{\"type\":\"string\"}},\"additionalProperties\":false}},\"matches\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"required\":[\"matchID\",\"positionID\",\"title\",\"company\",\"status\",\"matchDate\"],\"properties\":{\"matchID\":{\"type\":\"integer\"},\"positionID\":{\"type\":\"integer\"},\"title\":{\"type\":\"string\"},\"company\":{\"type\":\"string\"},\"status\":{\"type\":\"string\"},\"matchDate\":{\"type\":\"string\"}},\"additionalProperties\":false}}},\"additionalProperties\":false});",
+                  "});",
+                  "pm.test(\"Application status is placed\", function () { pm.expect(pm.response.json().status).to.eql(\"placed\"); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Close Cycle",
+      "item": [
+        {
+          "name": "Reject opening cycle",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{coordinatorToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/cycles/1",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"status\":\"open\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"string\"}},\"additionalProperties\":false});",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Close unknown cycle",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{coordinatorToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/cycles/999",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"status\":\"closed\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"string\"}},\"additionalProperties\":false});",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Close cycle as student",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{studentToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/cycles/1",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"status\":\"closed\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"string\"}},\"additionalProperties\":false});",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Close cycle",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{coordinatorToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/cycles/1",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"status\":\"closed\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"message\",\"applicationsNotMatched\"],\"properties\":{\"message\":{\"type\":\"string\"},\"applicationsNotMatched\":{\"type\":\"integer\"}},\"additionalProperties\":false});",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Close cycle again",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{coordinatorToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/cycles/1",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"status\":\"closed\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"string\"}},\"additionalProperties\":false});",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Post position after cycle closes",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{bluepeakToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{host}}/api/positions",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"title\":\"Postman API Test Position\",\"description\":\"Temporary position created by the Postman API collection.\",\"skillIDs\":[1,2]}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "  pm.response.to.have.jsonSchema({\"type\":\"object\",\"required\":[\"error\"],\"properties\":{\"error\":{\"type\":\"string\"}},\"additionalProperties\":false});",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "host",
+      "value": "http://127.0.0.1:5000",
+      "type": "string"
+    }
+  ]
+}
