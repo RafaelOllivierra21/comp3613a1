@@ -19,6 +19,44 @@ Advantages of this structure:
 4. Export endpoints for other services (including AI agents)
 5. Drive features from the CLI when needed
 
+## Assignment 2: Testing
+
+All tests run against the local app.
+
+### Unit and integration tests (pytest)
+
+With the virtual environment active, from the project root:
+
+```bash
+pytest tests/unit -v
+pytest tests/integration -v
+```
+
+Running `pytest` on its own runs both suites. Unit tests use mocked repositories and never touch the database. Integration tests create a fresh in-memory SQLite database for each test, so `database.db` is never changed.
+
+### API tests (Postman)
+
+The collection is `docs/postman/InternBridge.postman_collection.json`. It creates its own student and position and closes the internship cycle at the end, so it must start from a freshly reset local database.
+
+1. Reset the database and load the sample data:
+
+   ```powershell
+   python manage.py init
+   $env:INTERNBRIDGE_SAMPLE_PASSWORD = "Internbridge2026"
+   python manage.py seed-sample
+   ```
+
+2. Start the app with `python manage.py run`.
+3. In Postman, import the collection, choose Run collection, tick "Run collection without using stored cookies" and start the run.
+4. All 46 requests and 93 tests should pass.
+
+Repeat step 1 before running it again, because the run closes the cycle. The same collection also runs from the command line with Newman: `newman run docs/postman/InternBridge.postman_collection.json`.
+
+### Plans and specification
+
+- Test plans: `docs/assignment2/test-plans.md`
+- API specification: `docs/assignment2/InternBridge API Specification.md`
+
 ---
 
 ## Initial setup
