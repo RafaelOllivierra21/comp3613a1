@@ -12,7 +12,7 @@ class ModelUnitTests(unittest.TestCase):
             email="bob@mail.com",
             fullName="Bob Smith",
             number="868-555-0101",
-            password="hashed-password",
+            password="bobpass",
             role="student",
         )
 
